@@ -182,3 +182,5 @@ WebAuthnListResidentCredentials = 800
 WebAuthnCredentials = 801
 WebAuthnAddResidentCredential = 802
 WebAuthnRemoveResidentCredential = 803
+NEM2GetPublicKey = 804
+NEM2PublicKey = 805
