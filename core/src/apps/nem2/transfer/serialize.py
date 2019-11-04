@@ -4,7 +4,7 @@ from trezor.messages.NEMTransfer import NEMTransfer
 
 from ..helpers import (
     AES_BLOCK_SIZE,
-    NEM_TRANSACTION_TYPE_TRANSFER,
+    NEM2_TRANSACTION_TYPE_TRANSFER,
 )
 from ..writers import (
     serialize_tx_common,
@@ -13,10 +13,11 @@ from ..writers import (
     write_uint64_le,
 )
 
-
+# reflect the serialization used here:
+# https://github.com/nemtech/nem2-sdk-typescript-javascript/blob/master/src/infrastructure/catbuffer/TransferTransactionBodyBuilder.ts#L120
 def serialize_transfer(
-    common: NEMTransactionCommon,
-    transfer: NEMTransfer,
+    common: NEM2TransactionCommon,
+    transfer: NEM2TransferTransaction,
     public_key: bytes,
     payload: bytes = None,
     encrypted: bool = False,
@@ -24,23 +25,11 @@ def serialize_transfer(
     tx = serialize_tx_common(
         common,
         public_key,
-        NEM_TRANSACTION_TYPE_TRANSFER,
-        _get_version(common.network, transfer.mosaics),
+        NEM2_TRANSACTION_TYPE_TRANSFER,
+        _get_version(common.network_type, transfer.mosaics),
     )
 
-    write_bytes_with_len(tx, transfer.recipient.encode())
-    write_uint64_le(tx, transfer.amount)
-
-    if payload:
-        # payload + payload size (u32) + encryption flag (u32)
-        write_uint32_le(tx, len(payload) + 2 * 4)
-        if encrypted:
-            write_uint32_le(tx, 0x02)
-        else:
-            write_uint32_le(tx, 0x01)
-        write_bytes_with_len(tx, payload)
-    else:
-        write_uint32_le(tx, 0)
+    write_bytes_with_len(tx, transfer.recipient_address.encode())
 
     if transfer.mosaics:
         write_uint32_le(tx, len(transfer.mosaics))
@@ -48,14 +37,13 @@ def serialize_transfer(
     return tx
 
 
-def serialize_mosaic(w: bytearray, namespace: str, mosaic: str, quantity: int):
+def serialize_mosaic(w: bytearray, mosaic_id: int, amount: int):
     identifier_w = bytearray()
-    write_bytes_with_len(identifier_w, namespace.encode())
-    write_bytes_with_len(identifier_w, mosaic.encode())
+    write_uint64_le(identifier_w, mosaic_id)
 
     mosaic_w = bytearray()
     write_bytes_with_len(mosaic_w, identifier_w)
-    write_uint64_le(mosaic_w, quantity)
+    write_uint64_le(mosaic_w, amount)
 
     write_bytes_with_len(w, mosaic_w)
 
@@ -72,7 +60,7 @@ def serialize_importance_transfer(
     return w
 
 
-def get_transfer_payload(transfer: NEMTransfer, node) -> [bytes, bool]:
+def get_transfer_payload(transfer: NEM2Transfer, node) -> [bytes, bool]:
     payload = transfer.payload
     encrypted = False
     if transfer.public_key is not None:
@@ -104,8 +92,8 @@ def canonicalize_mosaics(mosaics: list):
     return sort_mosaics(mosaics)
 
 
-def are_mosaics_equal(a: NEMMosaic, b: NEMMosaic) -> bool:
-    if a.namespace == b.namespace and a.mosaic == b.mosaic:
+def are_mosaics_equal(a: NEM2Mosaic, b: NEM2Mosaic) -> bool:
+    if a.id == b.id:
         return True
     return False
 
@@ -118,7 +106,7 @@ def merge_mosaics(mosaics: list) -> list:
         found = False
         for k, y in enumerate(ret):
             if are_mosaics_equal(i, y):
-                ret[k].quantity += i.quantity
+                ret[k].amount += i.amount
                 found = True
         if not found:
             ret.append(i)

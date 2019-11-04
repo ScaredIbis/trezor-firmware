@@ -5,12 +5,11 @@ from trezor.messages.NEM2SignTx import NEM2SignTx
 from apps.common import seed
 from apps.common.paths import validate_path
 from apps.nem2 import CURVE, transfer
-from apps.nem2.helpers import NEM_HASH_ALG, check_path
+from apps.nem2.helpers import NEM2_HASH_ALG, check_path
 from apps.nem2.validators import validate
 
 
 async def sign_tx(ctx, msg: NEM2SignTx, keychain):
-    print("in sign_tx", check_path)
     validate(msg)
 
     await validate_path(
@@ -19,7 +18,6 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         keychain,
         msg.address_n,
         CURVE,
-        network=msg.transaction.version,
     )
 
     node = keychain.derive(msg.address_n, CURVE)
@@ -52,7 +50,7 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
     #     tx = await transfer.importance_transfer(
     #         ctx, public_key, common, msg.importance_transfer
     #     )
-    # else:
+    else:
         raise ValueError("No transaction provided")
 
     if msg.multisig:
@@ -69,9 +67,13 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
                 seed.remove_ed25519_prefix(node.public_key()), msg.transaction, tx
             )
 
-    signature = ed25519.sign(node.private_key(), tx, NEM_HASH_ALG)
+    # https://nemtech.github.io/concepts/transaction.html#signing-a-transaction
+    print("TX ", tx)
+    # signature = ed25519.sign(node.private_key(), msg.generation_hash + tx.decode(), NEM2_HASH_ALG)
+    # signature = ed25519.sign(node.private_key(), tx, NEM2_HASH_ALG)
 
     resp = NEM2SignedTx()
-    resp.data = tx
-    resp.signature = signature
+    resp.payload = "MOCK_PAYLOAD"
+    resp.hash = "MOCK_HASH"
+    resp.signature = "MOCK_SIGNATURE"
     return resp

@@ -6,17 +6,17 @@ from trezor.messages.NEM2SignTx import (
 from trezor.wire import ProcessError
 
 from .helpers import (
-    NEM_MAX_DIVISIBILITY,
-    NEM_MAX_ENCRYPTED_PAYLOAD_SIZE,
-    NEM_MAX_PLAIN_PAYLOAD_SIZE,
-    NEM_MAX_SUPPLY,
-    NEM_NETWORK_MAINNET,
-    NEM_NETWORK_MIJIN,
-    NEM_NETWORK_TESTNET,
-    NEM_PUBLIC_KEY_SIZE,
+    NEM2_MAX_DIVISIBILITY,
+    NEM2_MAX_ENCRYPTED_PAYLOAD_SIZE,
+    NEM2_MAX_PLAIN_PAYLOAD_SIZE,
+    NEM2_MAX_SUPPLY,
+    NEM2_NETWORK_MAINNET,
+    NEM2_NETWORK_MIJIN,
+    NEM2_NETWORK_TESTNET,
+    NEM2_PUBLIC_KEY_SIZE,
 )
 
-def validate(msg: NEMSignTx):
+def validate(msg: NEM2SignTx):
     if msg.transaction is None:
         raise ProcessError("No common transaction fields provided")
 
@@ -34,7 +34,7 @@ def validate(msg: NEMSignTx):
 
 
 
-def _validate_single_tx(msg: NEMSignTx):
+def _validate_single_tx(msg: NEM2SignTx):
     # ensure exactly one transaction is provided
     tx_count = (
         bool(msg.transfer)
@@ -50,44 +50,30 @@ def _validate_single_tx(msg: NEMSignTx):
         raise ProcessError("More than one transaction provided")
 
 
-def _validate_common(common: NEMTransactionCommon, inner: bool = False):
+def _validate_common(common: NEM2TransactionCommon, inner: bool = False):
 
     err = None
-    if common.fee is None:
-        err = "fee"
+    if common.type is None:
+        err = "type"
+    if common.network_type is None:
+        err = "network_type"
+    if common.version is None:
+        err = "version"
+    if common.max_fee is None:
+        err = "max_fee"
     if common.deadline is None:
         err = "deadline"
 
-    if not inner and common.signer_public_key:
-        raise ProcessError("Signer not allowed in outer transaction")
-
-    if inner and common.signer_public_key is None:
-        err = "signer_public_key"
-
     if err:
-        if inner:
-            raise ProcessError("No %s provided in inner transaction" % err)
-        else:
-            raise ProcessError("No %s provided" % err)
-
-    if common.signer_public_key is not None:
-        _validate_public_key(
-            common.signer_public_key, "Invalid sign_public_key in inner transaction"
-        )
+        raise ProcessError("No %s provided" % err)
 
 
-def _validate_public_key(public_key: bytes, err_msg: str):
-    if not public_key:
-        raise ProcessError("%s (none provided)" % err_msg)
-    if len(public_key) != NEM_PUBLIC_KEY_SIZE:
-        raise ProcessError("%s (invalid length)" % err_msg)
-
-def _validate_multisig(multisig: NEMTransactionCommon, network: int):
+def _validate_multisig(multisig: NEM2TransactionCommon, network: int):
     if multisig.network != network:
         raise ProcessError("Inner transaction network is different")
     _validate_public_key(multisig.signer, "Invalid multisig signer public key provided")
 
-def _validate_transfer(transfer: NEMTransfer, network: int):
+def _validate_transfer(transfer: NEM2TransferTransaction, network: int):
     if transfer.recipient_address is None:
         raise ProcessError("No recipient provided")
 
@@ -96,9 +82,7 @@ def _validate_transfer(transfer: NEMTransfer, network: int):
     #     raise ProcessError("Invalid recipient address")
 
     for m in transfer.mosaics:
-        if m.namespace is None:
-            raise ProcessError("No mosaic namespace provided")
-        if m.mosaic is None:
-            raise ProcessError("No mosaic name provided")
-        if m.quantity is None:
-            raise ProcessError("No mosaic quantity provided")
+        if m.id is None:
+            raise ProcessError("No mosaic id provided")
+        if m.amount is None:
+            raise ProcessError("No mosaic amount provided")

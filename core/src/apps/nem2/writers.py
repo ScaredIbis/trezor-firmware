@@ -2,7 +2,7 @@ from trezor.messages.NEMTransactionCommon import NEMTransactionCommon
 
 from apps.common.writers import write_bytes, write_uint32_le, write_uint64_le
 
-
+# https://github.com/nemtech/nem2-sdk-typescript-javascript/blob/master/src/infrastructure/catbuffer/TransactionBuilder.ts#L167
 def serialize_tx_common(
     common: NEMTransactionCommon,
     public_key: bytearray,
@@ -15,11 +15,10 @@ def serialize_tx_common(
     if version is None:
         version = common.network << 24 | 1
     write_uint32_le(w, version)
-    write_uint32_le(w, common.timestamp)
 
     write_bytes_with_len(w, public_key)
-    write_uint64_le(w, common.fee)
-    write_uint32_le(w, common.deadline)
+    write_uint64_le(w, common.max_fee)
+    write_uint64_le(w, common.deadline)
 
     return w
 
