@@ -1,25 +1,20 @@
-from trezor.messages.NEMTransactionCommon import NEMTransactionCommon
+from trezor.messages.NEM2TransactionCommon import NEM2TransactionCommon
 
 from apps.common.writers import write_bytes, write_uint32_le, write_uint64_le
 
 
 def serialize_tx_common(
-    common: NEMTransactionCommon,
-    public_key: bytearray,
-    transaction_type: int,
-    version: int = None,
+    common: NEM2TransactionCommon,
+    public_key: bytearray
 ) -> bytearray:
     w = bytearray()
 
-    write_uint32_le(w, transaction_type)
-    if version is None:
-        version = common.network << 24 | 1
-    write_uint32_le(w, version)
-    write_uint32_le(w, common.timestamp)
-
+    write_uint32_le(w, common.type)
+    write_uint32_le(w, common.network_type)
+    write_uint32_le(w, common.version)    
+    write_uint64_le(w, common.max_fee)
+    write_bytes_with_len(w, common.deadline)
     write_bytes_with_len(w, public_key)
-    write_uint64_le(w, common.fee)
-    write_uint32_le(w, common.deadline)
 
     return w
 

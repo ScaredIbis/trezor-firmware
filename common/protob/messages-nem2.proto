@@ -37,10 +37,11 @@ message NEM2SignTx {
     optional NEM2TransactionCommon transaction = 1;    // Common part of transaction
     optional NEM2TransactionCommon multisig = 2;       // Common part of inner transaction for multisig transactions
     optional NEM2TransferTransaction transfer = 3;          // Transfer transaction part
-    optional uint32 generationHash = 4;
-    optional uint32 network = 5;
-    optional uint32 address_n = 6;
-    optional bool cosigning = 7;
+    optional NEM2MosaicDefinitionTransaction mosaic_definition = 4; // Mosaic definition part
+    optional uint32 generationHash = 5;
+    optional uint32 network = 6;
+    repeated uint32 address_n = 7;
+    optional bool cosigning = 8;
 
     /**
     * Common types from
@@ -59,6 +60,8 @@ message NEM2SignTx {
     enum NEM2EntityType {
         RESERVED = 0;
         TRANSFER = 16724;
+        MOSAIC = 16717;
+        MOSAIC_SUPPLY = 16973;
     }
 
     enum NEM2NetworkType {
@@ -76,13 +79,11 @@ message NEM2SignTx {
     * https://github.com/nemtech/catbuffer/blob/master/schemas/transaction.cats
     */
     message NEM2TransactionCommon {
-        optional uint32 size = 1; // inline SizePrefixedEntity
-        optional uint64 signature = 2; // inline VerifiableEntity
-        optional uint32 signer_public_key = 3; // inline EntityBody
-        optional NEM2NetworkType version = 4 [default=MAIN_NET]; // inline EntityBody, defined as uint16 in catbuffer
-        optional NEM2EntityType type = 5; // inline EntityBody
-        optional uint64 fee = 6;
-        optional uint64 deadline = 7;
+        optional NEM2EntityType type = 1;
+        optional NEM2NetworkType network_type = 2;
+        optional uint32 version = 3 [default=1];
+        optional uint64 max_fee = 4;
+        optional string deadline = 5;
     }
 
     /**
@@ -97,6 +98,17 @@ message NEM2SignTx {
         optional uint32 mosaics_count = 5;
         optional bytes message = 6;
         repeated NEM2Mosaic mosaics = 7;
+    }
+
+    /**
+    * Mosaic Transaction type definitions
+    */
+    message NEM2MosaicDefinitionTransaction {
+        optional uint32 nonce = 1; // mosaic nonce
+        optional string mosaicId = 2; // mosaic identifier
+        optional uint32 flags = 3; // mosaic flags
+        optional uint32 divisibility = 4; // mosaic divisibility
+        optional uint64 duration = 5; // mosaic duration
     }
 }
 

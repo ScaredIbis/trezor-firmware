@@ -2,6 +2,7 @@
 # fmt: off
 from .. import protobuf as p
 
+from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2TransactionCommon import NEM2TransactionCommon
 from .NEM2TransferTransaction import NEM2TransferTransaction
 
@@ -21,17 +22,19 @@ class NEM2SignTx(p.MessageType):
         transaction: NEM2TransactionCommon = None,
         multisig: NEM2TransactionCommon = None,
         transfer: NEM2TransferTransaction = None,
+        mosaic_definition: NEM2MosaicDefinitionTransaction = None,
         generationHash: int = None,
         network: int = None,
-        address_n: int = None,
+        address_n: List[int] = None,
         cosigning: bool = None,
     ) -> None:
         self.transaction = transaction
         self.multisig = multisig
         self.transfer = transfer
+        self.mosaic_definition = mosaic_definition
         self.generationHash = generationHash
         self.network = network
-        self.address_n = address_n
+        self.address_n = address_n if address_n is not None else []
         self.cosigning = cosigning
 
     @classmethod
@@ -40,8 +43,9 @@ class NEM2SignTx(p.MessageType):
             1: ('transaction', NEM2TransactionCommon, 0),
             2: ('multisig', NEM2TransactionCommon, 0),
             3: ('transfer', NEM2TransferTransaction, 0),
-            4: ('generationHash', p.UVarintType, 0),
-            5: ('network', p.UVarintType, 0),
-            6: ('address_n', p.UVarintType, 0),
-            7: ('cosigning', p.BoolType, 0),
+            4: ('mosaic_definition', NEM2MosaicDefinitionTransaction, 0),
+            5: ('generationHash', p.UVarintType, 0),
+            6: ('network', p.UVarintType, 0),
+            7: ('address_n', p.UVarintType, p.FLAG_REPEATED),
+            8: ('cosigning', p.BoolType, 0),
         }

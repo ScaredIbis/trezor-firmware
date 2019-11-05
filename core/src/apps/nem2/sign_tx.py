@@ -4,14 +4,14 @@ from trezor.messages.NEM2SignTx import NEM2SignTx
 
 from apps.common import seed
 from apps.common.paths import validate_path
-from apps.nem2 import CURVE, transfer
+from apps.nem2 import CURVE, transfer, mosaic
 from apps.nem2.helpers import NEM_HASH_ALG, check_path
 from apps.nem2.validators import validate
 
 
 async def sign_tx(ctx, msg: NEM2SignTx, keychain):
-    print("in sign_tx", check_path)
-    validate(msg)
+    print("in sign_tx", check_path, msg.address_n)
+    # validate(msg)
 
     await validate_path(
         ctx,
@@ -24,20 +24,16 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
 
     node = keychain.derive(msg.address_n, CURVE)
 
-    if msg.multisig:
-        public_key = msg.multisig.signer
-        common = msg.multisig
-        await multisig.ask(ctx, msg)
-    else:
-        public_key = seed.remove_ed25519_prefix(node.public_key())
-        common = msg.transaction
+    public_key = seed.remove_ed25519_prefix(node.public_key())
+    common = msg.transaction
 
+    print("type", msg.transfer, msg.mosaic_definition)
     if msg.transfer:
         tx = await transfer.transfer(ctx, public_key, common, msg.transfer, node)
     # elif msg.provision_namespace:
     #     tx = await namespace.namespace(ctx, public_key, common, msg.provision_namespace)
-    # elif msg.mosaic_creation:
-    #     tx = await mosaic.mosaic_creation(ctx, public_key, common, msg.mosaic_creation)
+    elif msg.mosaic_definition:        
+        tx = await mosaic.mosaic_definition(ctx, public_key, common, msg.mosaic_definition)
     # elif msg.supply_change:
     #     tx = await mosaic.supply_change(ctx, public_key, common, msg.supply_change)
     # elif msg.aggregate_modification:
@@ -55,20 +51,21 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
     # else:
         raise ValueError("No transaction provided")
 
-    if msg.multisig:
-        # wrap transaction in multisig wrapper
-        if msg.cosigning:
-            tx = multisig.cosign(
-                seed.remove_ed25519_prefix(node.public_key()),
-                msg.transaction,
-                tx,
-                msg.multisig.signer,
-            )
-        else:
-            tx = multisig.initiate(
-                seed.remove_ed25519_prefix(node.public_key()), msg.transaction, tx
-            )
+    # if msg.multisig:
+    #     # wrap transaction in multisig wrapper
+    #     if msg.cosigning:
+    #         tx = multisig.cosign(
+    #             seed.remove_ed25519_prefix(node.public_key()),
+    #             msg.transaction,
+    #             tx,
+    #             msg.multisig.signer,
+    #         )
+    #     else:
+    #         tx = multisig.initiate(
+    #             seed.remove_ed25519_prefix(node.public_key()), msg.transaction, tx
+    #         )
 
+    print("signing", node.private_key(), tx)
     signature = ed25519.sign(node.private_key(), tx, NEM_HASH_ALG)
 
     resp = NEM2SignedTx()

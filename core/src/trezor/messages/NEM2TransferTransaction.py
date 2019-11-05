@@ -8,7 +8,7 @@ if __debug__:
     try:
         from typing import Dict, List, Optional
         from typing_extensions import Literal  # noqa: F401
-        EnumTypeNEM2EntityType = Literal[0, 16724]
+        EnumTypeNEM2EntityType = Literal[0, 16717, 16724, 16973]
     except ImportError:
         Dict, List, Optional = None, None, None  # type: ignore
         EnumTypeNEM2EntityType = None  # type: ignore
@@ -38,7 +38,7 @@ class NEM2TransferTransaction(p.MessageType):
     def get_fields(cls) -> Dict:
         return {
             1: ('version', p.UVarintType, 0),  # default=1
-            2: ('entityType', p.EnumType("NEM2EntityType", (0, 16724)), 0),  # default=TRANSFER
+            2: ('entityType', p.EnumType("NEM2EntityType", (0, 16973, 16724, 16717)), 0),  # default=TRANSFER
             3: ('recipient_address', p.UnicodeType, 0),
             4: ('message_size', p.UVarintType, 0),
             5: ('mosaics_count', p.UVarintType, 0),

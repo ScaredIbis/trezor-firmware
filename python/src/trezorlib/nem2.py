@@ -21,17 +21,17 @@ from .tools import CallException, expect
 
 TYPE_TRANSACTION_TRANSFER = 0x4154
 TYPE_MULTISIG_SIGNATURE = 0x1002
+TYPE_MOSAIC_DEFINITION = 0x414D
+
+NETWORK_TEST_NET = 152
 
 
 def create_transaction_common(transaction):
-    msg = proto.NEM2TransactionCommon()
-    msg.size = transaction["size"]
-    msg.fee = transaction["fee"]
+    msg = proto.NEM2TransactionCommon()    
+    msg.max_fee = int(transaction["maxFee"])
     msg.deadline = transaction["deadline"]
-
-    if "signer" in transaction:
-        msg.signer = bytes.fromhex(transaction["signer"])
-
+    msg.networkType = transaction["networkType"]
+    msg.version = transaction["version"]
     return msg
 
 
@@ -58,9 +58,15 @@ def create_transfer(transaction):
 
     return msg
 
+def create_mosaic_defnition(transaction):
+    msg = proto.NEM2MosaicDefinitionTransaction()
+    return msg
+
 def fill_transaction_by_type(msg, transaction):
-    if transaction["entityType"] == TYPE_TRANSACTION_TRANSFER:
+    if transaction["type"] == TYPE_TRANSACTION_TRANSFER:
         msg.transfer = create_transfer(transaction)
+    if transaction["type"] == TYPE_MOSAIC_DEFINITION:
+        msg.mosaic_definition = create_mosaic_defnition(transaction)
     else:
         raise ValueError("Unknown transaction type")
 
@@ -92,6 +98,5 @@ def sign_tx(client, n, transaction):
         raise CallException(e.args)
 
     print("GOT TO HERE", msg)
-    assert msg.transaction is not None
-    msg.transaction.address_n = n
+    msg.address_n = n
     return client.call(msg)
