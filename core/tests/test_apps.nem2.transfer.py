@@ -9,6 +9,8 @@ if not utils.BITCOIN_ONLY:
     from apps.nem2.transfer.serialize import *
     from trezor.messages.NEM2TransferTransaction import NEM2TransferTransaction
     from trezor.messages.NEM2SignTx import NEM2SignTx
+    from trezor.messages.NEM2Mosaic import NEM2Mosaic
+    from trezor.messages.NEM2TransferMessage import NEM2TransferMessage
 
 
 @unittest.skipUnless(not utils.BITCOIN_ONLY, "altcoin")
@@ -23,7 +25,8 @@ class TestNem2Transfer(unittest.TestCase):
                         20000,
                         113248176649,
                         "SAIKV5OOWCQ3EHIBMJH7HR2GGKPXUG2VT4OE3FU7",
-                        0)
+                        {"payload": "", "type": 0},
+                        [{ "id": "308F144790CD7BC4", "amount": 1000000000}])
 
         t = serialize_transfer(m.transaction, m.transfer, unhexlify('90BA6CA2244CEA2E1826F3D93A22DA11284924814C4D63F43CD81FD28D228BE3'))
 
@@ -31,7 +34,7 @@ class TestNem2Transfer(unittest.TestCase):
         # self.assertEqual(hashlib.sha3_256(t, keccak=True).digest(), unhexlify('0acbf8df91e6a65dc56c56c43d65f31ff2a6a48d06fc66e78c7f3436faf3e74f'))
 
 def _create_msg(network_type: int, tx_type: int, version: int, max_fee: int,
-                deadline: int, recipient_address: bytearray, num_mosaics: int):
+                deadline: int, recipient_address: bytearray, message: dict, mosaics: list):
     m = NEM2SignTx()
     m.transaction = NEM2TransactionCommon()
     m.transaction.network_type = network_type
@@ -41,9 +44,10 @@ def _create_msg(network_type: int, tx_type: int, version: int, max_fee: int,
     m.transaction.deadline = deadline
     m.transfer = NEM2TransferTransaction()
     m.transfer.recipient_address = recipient_address
+    m.transfer.message = NEM2TransferMessage(payload=message["payload"], type=message["type"])
     m.transfer.mosaics = list()
-    for i in range(num_mosaics):
-        m.transfer.mosaics.append(NEM2Mosaic())
+    for i in mosaics:
+        m.transfer.mosaics.append(NEM2Mosaic(id=i["id"], amount=i["amount"]))
     return m
 
 

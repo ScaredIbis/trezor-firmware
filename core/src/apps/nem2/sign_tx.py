@@ -75,5 +75,4 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
     resp = NEM2SignedTx()
     resp.payload = "MOCK_PAYLOAD"
     resp.hash = "MOCK_HASH"
-    resp.signature = "MOCK_SIGNATURE"
     return resp

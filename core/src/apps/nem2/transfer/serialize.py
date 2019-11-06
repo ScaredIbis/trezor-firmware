@@ -1,18 +1,22 @@
-from trezor.crypto import random
+from trezor.crypto import random, base32
 from trezor.messages.NEMTransactionCommon import NEMTransactionCommon
 from trezor.messages.NEMTransfer import NEMTransfer
+from ubinascii import unhexlify
 
 from ..helpers import (
     AES_BLOCK_SIZE,
     NEM2_TRANSACTION_TYPE_TRANSFER,
 )
-from ..writers import (
-    serialize_tx_common,
-    write_bytes_with_len,
-    write_uint32_le,
-    write_uint64_le,
-)
 
+from ..writers import serialize_tx_common
+
+from apps.common.writers import (
+    write_bytes,
+    write_uint8,
+    write_uint16_le,
+    write_uint32_le,
+    write_uint64_le
+)
 # reflect the serialization used here:
 # https://github.com/nemtech/nem2-sdk-typescript-javascript/blob/master/src/infrastructure/catbuffer/TransferTransactionBodyBuilder.ts#L120
 def serialize_transfer(
@@ -22,31 +26,29 @@ def serialize_transfer(
     payload: bytes = None,
     encrypted: bool = False,
 ) -> bytearray:
-    tx = serialize_tx_common(
-        common,
-        public_key,
-        NEM2_TRANSACTION_TYPE_TRANSFER,
-        _get_version(common.network_type, transfer.mosaics),
-    )
+    tx = serialize_tx_common(common)
 
-    write_bytes_with_len(tx, transfer.recipient_address.encode())
+    # recipient_address (catbuffer UnresolvedAddress - 25 bits) base 32 encoded
+    write_bytes(tx, base32.decode(transfer.recipient_address))
 
-    if transfer.mosaics:
-        write_uint32_le(tx, len(transfer.mosaics))
+    # message size (2 bytes)
+    write_uint16_le(tx, len(transfer.message.payload.encode("utf-8")))
+
+    # mosaics count (1 byte)
+    write_uint8(tx, len(transfer.mosaics))
+
+    # message (<message size> bytes)
+    write_bytes(tx, bytearray(transfer.message.payload.encode()))
+
+    # mosaics
+    for mosaic in transfer.mosaics:
+        serialize_mosaic(tx, mosaic.id, mosaic.amount)
 
     return tx
 
-
-def serialize_mosaic(w: bytearray, mosaic_id: int, amount: int):
-    identifier_w = bytearray()
-    write_uint64_le(identifier_w, mosaic_id)
-
-    mosaic_w = bytearray()
-    write_bytes_with_len(mosaic_w, identifier_w)
-    write_uint64_le(mosaic_w, amount)
-
-    write_bytes_with_len(w, mosaic_w)
-
+def serialize_mosaic(w: bytearray, mosaic_id: str, amount: int):
+    write_uint64_le(w, int(mosaic_id, 16))
+    write_uint64_le(w, amount)
 
 def serialize_importance_transfer(
     common: NEMTransactionCommon, imp: NEMImportanceTransfer, public_key: bytes

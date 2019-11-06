@@ -14,7 +14,7 @@ class NEM2Mosaic(p.MessageType):
 
     def __init__(
         self,
-        id: int = None,
+        id: str = None,
         amount: int = None,
     ) -> None:
         self.id = id
@@ -23,6 +23,6 @@ class NEM2Mosaic(p.MessageType):
     @classmethod
     def get_fields(cls) -> Dict:
         return {
-            1: ('id', p.UVarintType, 0),
+            1: ('id', p.UnicodeType, 0),
             2: ('amount', p.UVarintType, 0),
         }
