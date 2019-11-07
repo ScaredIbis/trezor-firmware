@@ -31,6 +31,9 @@ class TestMsgNEM2SignTxTransfer:
                 [
                     # Confirm transfer and network fee
                     proto.ButtonRequest(code=proto.ButtonRequestType.ConfirmOutput),
+                    # Confirm mosaic
+                    proto.ButtonRequest(code=proto.ButtonRequestType.ConfirmOutput),
+                    proto.ButtonRequest(code=proto.ButtonRequestType.ConfirmOutput),
                     # Confirm recipient
                     proto.ButtonRequest(code=proto.ButtonRequestType.SignTx),
                     proto.NEM2SignedTx(),
@@ -45,13 +48,13 @@ class TestMsgNEM2SignTxTransfer:
                     "network_type": nem2.NETWORK_TYPE_TEST_NET,
                     "generation_hash": "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
                     "version": 36865,
-                    "max_fee": 100,
-                    "deadline": 113212179217,
+                    "max_fee": "100",
+                    "deadline": "113214071409",
                     "recipient_address": "TALICE2GMA34CXHD7XLJQ536NM5UNKQHTORNNT2J",
-                    "mosaics": [{ "amount": 10000000, "id": "85BBEA6CC462B244" }],
+                    "mosaics": [{ "amount": "10000000", "id": "85BBEA6CC462B244" }],
                     "message": {
-                        "payload": b"test_nem2_transaction_transfer".hex(),
-                        "type": 1,
+                        "payload": "This is a transfer",
+                        "type": 0,
                     },
                 },
             )

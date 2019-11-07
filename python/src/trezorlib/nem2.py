@@ -36,6 +36,7 @@ def create_transaction_common(transaction):
     msg.deadline = transaction["deadline"]
 
     if "signer" in transaction:
+        print("CALLING FROMHEX")
         msg.signer = bytes.fromhex(transaction["signer"])
 
     return msg
@@ -46,12 +47,15 @@ def create_transfer(transaction):
     msg.recipient_address = transaction["recipient_address"]
 
     if "payload" in transaction["message"]:
-        msg.message = bytes.fromhex(transaction["message"]["payload"])
+        msg.message = proto.NEM2TransferMessage(
+            type=transaction["message"]["type"],
+            payload=transaction["message"]["payload"]
+        )
 
     if "mosaics" in transaction:
         msg.mosaics = [
             proto.NEM2Mosaic(
-                id=int(mosaic["id"], 16),
+                id=mosaic["id"],
                 amount=mosaic["amount"],
             )
             for mosaic in transaction["mosaics"]

@@ -63,7 +63,7 @@ def serialize_transfer(
 
 def serialize_mosaic(w: bytearray, mosaic_id: str, amount: int):
     write_uint64_le(w, int(mosaic_id, 16))
-    write_uint64_le(w, amount)
+    write_uint64_le(w, int(amount))
 
 def serialize_importance_transfer(
     common: NEMTransactionCommon, imp: NEMImportanceTransfer, public_key: bytes
