@@ -8,7 +8,7 @@ from ..helpers import (
     NEM2_TRANSACTION_TYPE_TRANSFER,
 )
 
-from ..writers import serialize_tx_common
+from ..writers import serialize_tx_common, get_common_message_size
 
 from apps.common.writers import (
     write_bytes,
@@ -26,18 +26,33 @@ def serialize_transfer(
     payload: bytes = None,
     encrypted: bool = False,
 ) -> bytearray:
-    tx = serialize_tx_common(common)
+    tx = bytearray()
+
+    size = get_common_message_size()
+    # add up the transfer-specific message attribute sizes
+    size += 25 # recipient_address (catbuffer UnresolvedAddress)
+    size += 2 # message size
+    size += 1 # mosaics count
+    size += 1 + len(transfer.message.payload.encode()) # message type takes up 1 byte
+    size += len(transfer.mosaics) * (8 + 8) # 8 bytes id + 8 bytes amount (catbuffer Mosaic)
+
+    write_uint32_le(tx, size)
+
+    tx = serialize_tx_common(tx, common)
 
     # recipient_address (catbuffer UnresolvedAddress - 25 bits) base 32 encoded
     write_bytes(tx, base32.decode(transfer.recipient_address))
 
-    # message size (2 bytes)
-    write_uint16_le(tx, len(transfer.message.payload.encode("utf-8")))
+    # message size (1 byte for for + n bytes for payload)
+    write_uint16_le(tx, 1 + len(transfer.message.payload.encode()))
 
     # mosaics count (1 byte)
     write_uint8(tx, len(transfer.mosaics))
 
     # message (<message size> bytes)
+    write_uint8(tx, transfer.message.type)
+
+    #message payload
     write_bytes(tx, bytearray(transfer.message.payload.encode()))
 
     # mosaics

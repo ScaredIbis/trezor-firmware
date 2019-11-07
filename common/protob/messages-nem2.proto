@@ -79,8 +79,8 @@ message NEM2SignTx {
         optional NEM2EntityType type = 1; // inline EntityBody
         optional NEM2NetworkType network_type = 2;
         optional uint32 version = 3 [default=1]; // inline EntityBody, defined as uint16 in catbuffer
-        optional uint64 max_fee = 4;
-        optional uint64 deadline = 5;
+        optional string max_fee = 4;
+        optional string deadline = 5;
     }
 
     /**
