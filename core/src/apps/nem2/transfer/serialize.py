@@ -1,7 +1,7 @@
 from trezor.crypto import random, base32
 from trezor.messages.NEMTransactionCommon import NEMTransactionCommon
 from trezor.messages.NEMTransfer import NEMTransfer
-from ubinascii import unhexlify
+from ubinascii import hexlify, unhexlify
 
 from ..helpers import (
     AES_BLOCK_SIZE,
@@ -53,7 +53,7 @@ def serialize_transfer(
     write_uint8(tx, transfer.message.type)
 
     #message payload
-    write_bytes(tx, bytearray(transfer.message.payload.encode()))
+    write_bytes(tx, transfer.message.payload.encode())
 
     # mosaics
     for mosaic in transfer.mosaics:

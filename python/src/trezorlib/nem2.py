@@ -19,6 +19,7 @@ import json
 from . import messages as proto
 from .tools import CallException, expect
 
+
 TYPE_TRANSACTION_TRANSFER = 0x4154
 TYPE_MULTISIG_SIGNATURE = 0x1002
 
@@ -36,8 +37,7 @@ def create_transaction_common(transaction):
     msg.deadline = transaction["deadline"]
 
     if "signer" in transaction:
-        print("CALLING FROMHEX")
-        msg.signer = bytes.fromhex(transaction["signer"])
+        msg.signer = transaction["signer"]
 
     return msg
 
@@ -98,5 +98,5 @@ def sign_tx(client, n, transaction):
 
     assert msg.transaction is not None
     msg.address_n = n
-    msg.generation_hash = int(transaction["generation_hash"], 16)
+    msg.generation_hash = transaction["generation_hash"]
     return client.call(msg)
