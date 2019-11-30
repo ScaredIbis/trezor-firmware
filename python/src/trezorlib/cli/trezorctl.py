@@ -48,6 +48,7 @@ from trezorlib import (
     misc,
     monero,
     nem,
+    nem2,
     protobuf,
     ripple,
     stellar,
@@ -1639,6 +1640,44 @@ def nem_sign_tx(connect, address, file, broadcast):
         ).json()
     else:
         return payload
+
+#
+# NEM2 functions
+#
+
+# TODO
+# @cli.command(help="Get NEM2 Public Key for specified path.")
+# @click.option("-n", "--address", required=True, help="BIP-32 path, e.g. m/44'/43'/0'")
+# @click.option("-N", "--network", type=int, default=0x68)
+# @click.option("-d", "--show-display", is_flag=True)
+# @click.pass_obj
+# def nem2_get_address(connect, address, network, show_display):
+#     client = connect()
+#     address_n = tools.parse_path(address)
+#     return nem.get_address(client, address_n, network, show_display)
+
+
+@cli.command(help="Sign NEM2 transaction.")
+@click.option("-n", "--address", required=True, help="BIP-32 path to signing key")
+@click.option("-g", "--generation_hash", required=True, help="NEM2 network generation hash")
+@click.option(
+    "-f",
+    "--file",
+    type=click.File("r"),
+    default="-",
+    help="Transaction object as per typescript sdk",
+)
+@click.pass_obj
+def nem2_sign_tx(connect, address, generation_hash, file):
+    client = connect()
+    address_n = tools.parse_path(address)
+    generation_hash = generation_hash
+
+    transaction = nem2.sign_tx(client, address_n, generation_hash, json.load(file))
+
+    payload = {"payload": transaction.payload.hex(), "hash": transaction.hash.hex()}
+
+    return payload
 
 
 #

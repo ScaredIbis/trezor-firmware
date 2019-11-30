@@ -10,9 +10,9 @@ from .helpers import (
     NEM2_MAX_ENCRYPTED_PAYLOAD_SIZE,
     NEM2_MAX_PLAIN_PAYLOAD_SIZE,
     NEM2_MAX_SUPPLY,
-    NEM2_NETWORK_MAINNET,
+    NEM2_NETWORK_MAIN_NET,
     NEM2_NETWORK_MIJIN,
-    NEM2_NETWORK_TESTNET,
+    NEM2_NETWORK_TEST_NET,
     NEM2_PUBLIC_KEY_SIZE,
 )
 
@@ -39,8 +39,8 @@ def _validate_single_tx(msg: NEM2SignTx):
     tx_count = (
         bool(msg.transfer)
         # + bool(msg.provision_namespace)
-        # + bool(msg.mosaic_creation)
-        # + bool(msg.supply_change)
+        + bool(msg.mosaic_definition)
+        + bool(msg.mosaic_supply)
         # + bool(msg.aggregate_modification)
         # + bool(msg.importance_transfer)
     )

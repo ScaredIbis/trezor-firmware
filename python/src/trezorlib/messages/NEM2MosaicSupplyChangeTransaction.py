@@ -10,19 +10,22 @@ if __debug__:
         Dict, List, Optional = None, None, None  # type: ignore
 
 
-class NEM2Mosaic(p.MessageType):
+class NEM2MosaicSupplyChangeTransaction(p.MessageType):
 
     def __init__(
         self,
-        id: str = None,
-        amount: str = None,
+        mosaic_id: str = None,
+        action: int = None,
+        delta: int = None,
     ) -> None:
-        self.id = id
-        self.amount = amount
+        self.mosaic_id = mosaic_id
+        self.action = action
+        self.delta = delta
 
     @classmethod
     def get_fields(cls) -> Dict:
         return {
-            1: ('id', p.UnicodeType, 0),
-            2: ('amount', p.UnicodeType, 0),
+            1: ('mosaic_id', p.UnicodeType, 0),
+            2: ('action', p.UVarintType, 0),
+            3: ('delta', p.UVarintType, 0),
         }

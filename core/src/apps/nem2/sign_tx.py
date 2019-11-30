@@ -1,15 +1,18 @@
 from trezor.crypto.curve import ed25519
+from trezor.crypto.hashlib import sha3_256
 from trezor.messages.NEM2SignedTx import NEM2SignedTx
 from trezor.messages.NEM2SignTx import NEM2SignTx
+from ubinascii import unhexlify, hexlify
 
 from apps.common import seed
 from apps.common.paths import validate_path
-from apps.nem2 import CURVE, transfer
-from apps.nem2.helpers import NEM2_HASH_ALG, check_path
+from apps.nem2 import CURVE, transfer, mosaic
+from apps.nem2.helpers import NEM2_HASH_ALG, check_path, NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED, NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE
 from apps.nem2.validators import validate
 
 
 async def sign_tx(ctx, msg: NEM2SignTx, keychain):
+    print("signing nem2 transaction", msg)
     validate(msg)
 
     await validate_path(
@@ -30,12 +33,16 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         public_key = seed.remove_ed25519_prefix(node.public_key())
         common = msg.transaction
 
+    print(msg)
+
     if msg.transfer:
         tx = await transfer.transfer(ctx, public_key, common, msg.transfer, node)
+    elif msg.mosaic_definition:
+        tx = await mosaic.mosaic_definition(ctx, public_key, common, msg.mosaic_definition)
+    elif msg.mosaic_supply:
+        tx = await mosaic.mosaic_supply(ctx, common, msg.mosaic_supply)
     # elif msg.provision_namespace:
     #     tx = await namespace.namespace(ctx, public_key, common, msg.provision_namespace)
-    # elif msg.mosaic_creation:
-    #     tx = await mosaic.mosaic_creation(ctx, public_key, common, msg.mosaic_creation)
     # elif msg.supply_change:
     #     tx = await mosaic.supply_change(ctx, public_key, common, msg.supply_change)
     # elif msg.aggregate_modification:
@@ -68,12 +75,28 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
             )
 
     # https://nemtech.github.io/concepts/transaction.html#signing-a-transaction
-    print("TX ", tx)
-    # signature = ed25519.sign(node.private_key(), msg.generation_hash + tx.decode(), NEM2_HASH_ALG)
-    # signature = ed25519.sign(node.private_key(), tx, NEM2_HASH_ALG)
+    # signing bytes (all tx data expect size, signature and signer)
+    # everything after the first 108 bytes of serialised transaction
+    signing_bytes = tx[108:]
+
+    # sign tx
+    generation_hash_bytes = unhexlify(msg.generation_hash)
+    signature = ed25519.sign(node.private_key(), generation_hash_bytes + signing_bytes, NEM2_HASH_ALG)
+
+    # prepare payload
+    payload = tx[:8] + signature + public_key + tx[104:]
+
+    # prepare hash content
+    payload_without_header = payload[108:]
+    data_bytes = generation_hash_bytes + payload_without_header
+    if msg.transaction.type == NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED or msg.transaction.type == NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE:
+        data_bytes = generation_hash_bytes + payload_without_header[0:52]
+
+    first_half_of_sig = payload[8:40]
+    signer = payload[72:104]
+    hash_bytes = first_half_of_sig + signer + data_bytes
 
     resp = NEM2SignedTx()
-    resp.payload = "MOCK_PAYLOAD"
-    resp.hash = "MOCK_HASH"
-    resp.signature = "MOCK_SIGNATURE"
+    resp.payload = payload
+    resp.hash = sha3_256(hash_bytes, keccak=True).digest()
     return resp

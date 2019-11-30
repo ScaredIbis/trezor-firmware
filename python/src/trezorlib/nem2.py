@@ -21,6 +21,8 @@ from .tools import CallException, expect
 
 TYPE_TRANSACTION_TRANSFER = 0x4154
 TYPE_MULTISIG_SIGNATURE = 0x1002
+TYPE_MOSAIC_DEFINITION = 0x414D
+TYPE_MOSAIC_SUPPLY_CHANGE = 0x424D
 
 NETWORK_TYPE_MIJIN_TEST = 0x90
 NETWORK_TYPE_MIJIN = 0x60
@@ -30,9 +32,9 @@ NETWORK_TYPE_MAIN_NET = 0x68
 def create_transaction_common(transaction):
     msg = proto.NEM2TransactionCommon()
     msg.type = transaction["type"]
-    msg.network_type = transaction["network_type"]
+    msg.network_type = transaction["network"]
     msg.version = transaction["version"]
-    msg.max_fee = transaction["max_fee"]
+    msg.max_fee = transaction["maxFee"]
     msg.deadline = transaction["deadline"]
 
     if "signer" in transaction:
@@ -43,15 +45,21 @@ def create_transaction_common(transaction):
 
 def create_transfer(transaction):
     msg = proto.NEM2TransferTransaction()
-    msg.recipient_address = transaction["recipient_address"]
+    msg.recipient_address = proto.NEM2RecipientAddress(
+        address=transaction["recipientAddress"]["address"],
+        network_type=transaction["recipientAddress"]["networkType"],
+    )
 
     if "payload" in transaction["message"]:
-        msg.message = bytes.fromhex(transaction["message"]["payload"])
+        msg.message = proto.NEM2TransferMessage(
+            payload=transaction["message"]["payload"],
+            type=transaction["message"]["type"]
+        )
 
     if "mosaics" in transaction:
         msg.mosaics = [
             proto.NEM2Mosaic(
-                id=int(mosaic["id"], 16),
+                id=mosaic["id"],
                 amount=mosaic["amount"],
             )
             for mosaic in transaction["mosaics"]
@@ -59,11 +67,30 @@ def create_transfer(transaction):
 
     return msg
 
+def create_mosaic_defnition(transaction):
+    msg = proto.NEM2MosaicDefinitionTransaction()
+    msg.nonce = transaction["nonce"]
+    msg.mosaic_id = transaction["mosaicId"]
+    msg.flags = transaction["flags"]
+    msg.divisibility = transaction["divisibility"]
+    msg.duration = int(transaction["duration"])
+    return msg
+
+
+def create_mosaic_supply(transaction):
+    msg = proto.NEM2MosaicSupplyChangeTransaction()
+    msg.mosaic_id = transaction["mosaicId"]
+    msg.delta = int(transaction["delta"])
+    msg.action = transaction["action"]
+    return msg
+
 def fill_transaction_by_type(msg, transaction):
     if transaction["type"] == TYPE_TRANSACTION_TRANSFER:
         msg.transfer = create_transfer(transaction)
-    else:
-        raise ValueError("Unknown transaction type")
+    if transaction["type"] == TYPE_MOSAIC_DEFINITION:
+        msg.mosaic_definition = create_mosaic_defnition(transaction)
+    if transaction["type"] == TYPE_MOSAIC_SUPPLY_CHANGE:
+        msg.mosaic_supply = create_mosaic_supply(transaction)
 
 
 def create_sign_tx(transaction):
@@ -86,7 +113,11 @@ def get_address(client, n, network, show_display=False):
 
 
 @expect(proto.NEM2SignedTx)
-def sign_tx(client, n, transaction):
+def sign_tx(client, n, generation_hash, transaction):
+
+    assert n is not None
+    assert generation_hash is not None
+
     try:
         msg = create_sign_tx(transaction)
     except ValueError as e:
@@ -94,5 +125,5 @@ def sign_tx(client, n, transaction):
 
     assert msg.transaction is not None
     msg.address_n = n
-    msg.generation_hash = int(transaction["generation_hash"], 16)
+    msg.generation_hash = generation_hash
     return client.call(msg)
