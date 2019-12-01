@@ -16,11 +16,13 @@ from ..writers import (
 
 
 def serialize_mosaic_definition(
-    common: NEM2TransactionCommon, creation: NEM2MosaicDefinitionTransaction, public_key: bytes
+    common: NEM2TransactionCommon, 
+    creation: NEM2MosaicDefinitionTransaction,
+    embedded: bool
 ):
     tx = bytearray()
 
-    size = get_common_message_size()
+    size = get_common_message_size(embedded)
     # add up the mosaic-definition specific message attribute sizes
     size += 4 # nonce is 4 bytes
     size += 8 # mosaic id is 8 bytes
@@ -30,7 +32,7 @@ def serialize_mosaic_definition(
 
     write_uint32_le(tx, size)
 
-    tx = serialize_tx_common(tx, common)
+    tx = serialize_tx_common(tx, common, embedded)
 
     write_uint32_le(tx, int(creation.mosaic_id[8:], 16))
     write_uint32_le(tx, int(creation.mosaic_id[:8], 16))
@@ -39,12 +41,13 @@ def serialize_mosaic_definition(
     write_uint8(tx, creation.flags)
     write_uint8(tx, creation.divisibility)        
 
-    return tx
+    return tx, size
 
 
 def serialize_mosaic_supply(
     common: NEM2TransactionCommon, 
-    supply_change: NEM2MosaicSupplyChangeTransaction
+    supply_change: NEM2MosaicSupplyChangeTransaction,
+    embedded: bool
 ):
     tx = bytearray()
 
@@ -56,11 +59,11 @@ def serialize_mosaic_supply(
 
     write_uint32_le(tx, size)
 
-    tx = serialize_tx_common(tx, common)
+    tx = serialize_tx_common(tx, common, embedded)
 
     write_uint32_le(tx, int(supply_change.mosaic_id[8:], 16))
     write_uint32_le(tx, int(supply_change.mosaic_id[:8], 16))
     write_uint64_le(tx, supply_change.delta)    
     write_uint8(tx, supply_change.action)
 
-    return tx
+    return tx, size

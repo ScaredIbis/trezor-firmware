@@ -6,7 +6,7 @@ from ubinascii import unhexlify, hexlify
 
 from apps.common import seed
 from apps.common.paths import validate_path
-from apps.nem2 import CURVE, transfer, mosaic
+from apps.nem2 import CURVE, transfer, mosaic, aggregate
 from apps.nem2.helpers import NEM2_HASH_ALG, check_path, NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED, NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE
 from apps.nem2.validators import validate
 
@@ -33,32 +33,16 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         public_key = seed.remove_ed25519_prefix(node.public_key())
         common = msg.transaction
 
-    print(msg)
-
-    if msg.transfer:
-        tx = await transfer.transfer(ctx, public_key, common, msg.transfer, node)
-    elif msg.mosaic_definition:
-        tx = await mosaic.mosaic_definition(ctx, public_key, common, msg.mosaic_definition)
-    elif msg.mosaic_supply:
-        tx = await mosaic.mosaic_supply(ctx, common, msg.mosaic_supply)
-    # elif msg.provision_namespace:
-    #     tx = await namespace.namespace(ctx, public_key, common, msg.provision_namespace)
-    # elif msg.supply_change:
-    #     tx = await mosaic.supply_change(ctx, public_key, common, msg.supply_change)
-    # elif msg.aggregate_modification:
-    #     tx = await multisig.aggregate_modification(
-    #         ctx,
-    #         public_key,
-    #         common,
-    #         msg.aggregate_modification,
-    #         msg.multisig is not None,
-    #     )
-    # elif msg.importance_transfer:
-    #     tx = await transfer.importance_transfer(
-    #         ctx, public_key, common, msg.importance_transfer
-    #     )
+    if msg.aggregate_complete:
+        tx = bytearray()
+        txs_size = 0
+        for inner_tx in msg.aggregate_complete.transactions:            
+            tx_serialized, tx_size = await serialize_tx(ctx, public_key, common, inner_tx, embedded=True)            
+            tx += tx_serialized
+            txs_size += tx_size     
+        tx = await aggregate.aggregate_complete(ctx, common, msg.aggregate_complete, txs_size) + tx
     else:
-        raise ValueError("No transaction provided")
+        tx, size = await serialize_tx(ctx, public_key, common, msg)
 
     if msg.multisig:
         # wrap transaction in multisig wrapper
@@ -100,3 +84,15 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
     resp.payload = payload
     resp.hash = sha3_256(hash_bytes, keccak=True).digest()
     return resp
+
+
+async def serialize_tx(ctx, public_key, common, msg, embedded=False):
+    if msg.transfer:
+        tx, size = await transfer.transfer(ctx, public_key, common, msg.transfer, embedded)
+    elif msg.mosaic_definition:
+        tx, size = await mosaic.mosaic_definition(ctx, common, msg.mosaic_definition, embedded)
+    elif msg.mosaic_supply:
+        tx, size = await mosaic.mosaic_supply(ctx, common, msg.mosaic_supply, embedded)
+    else:
+        raise ValueError("No transaction provided")
+    return tx, size

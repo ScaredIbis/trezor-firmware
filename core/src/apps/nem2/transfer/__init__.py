@@ -4,13 +4,17 @@ from trezor.messages.NEM2TransferTransaction import NEM2TransferTransaction
 from . import layout, serialize
 
 async def transfer(
-    ctx, public_key: bytes, common: NEM2TransactionCommon, transfer: NEM2TransferTransaction, node
+    ctx, 
+    public_key: bytes, 
+    common: NEM2TransactionCommon, 
+    transfer: NEM2TransferTransaction,
+    embedded: bool   
 ):
     transfer.mosaics = serialize.canonicalize_mosaics(transfer.mosaics)
 
     await layout.ask_transfer(ctx, common, transfer)
 
-    w = serialize.serialize_transfer(common, transfer)
+    w, size = serialize.serialize_transfer(common, transfer, embedded)
     for mosaic in transfer.mosaics:
         serialize.serialize_mosaic(w, mosaic.id, mosaic.amount)
-    return w
+    return w, size

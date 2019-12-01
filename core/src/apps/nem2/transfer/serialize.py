@@ -21,8 +21,9 @@ from apps.common.writers import (
 # https://github.com/nemtech/nem2-sdk-typescript-javascript/blob/master/src/infrastructure/catbuffer/TransferTransactionBodyBuilder.ts#L120
 def serialize_transfer(
     common: NEM2TransactionCommon,
-    transfer: NEM2TransferTransaction
-) -> bytearray:
+    transfer: NEM2TransferTransaction,
+    embedded: bool
+):
     tx = bytearray()
 
     size = get_common_message_size()
@@ -36,7 +37,7 @@ def serialize_transfer(
 
     write_uint32_le(tx, size)
 
-    tx = serialize_tx_common(tx, common)
+    tx = serialize_tx_common(tx, common, embedded)
 
     # recipient_address (catbuffer UnresolvedAddress - 25 bits) base 32 encoded
     write_bytes(tx, base32.decode(transfer.recipient_address))
@@ -60,7 +61,7 @@ def serialize_transfer(
     #message payload (<message size> bytes)
     write_bytes(tx, transfer.message.payload.encode())
 
-    return tx
+    return tx, size
 
 def serialize_mosaic(w: bytearray, mosaic_id: str, amount: int):
     write_uint64_le(w, int(mosaic_id, 16))

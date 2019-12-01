@@ -170,6 +170,8 @@ from .MoneroTransactionSourceEntry import MoneroTransactionSourceEntry
 from .MoneroTransferDetails import MoneroTransferDetails
 from .MoneroWatchKey import MoneroWatchKey
 from .MultisigRedeemScriptType import MultisigRedeemScriptType
+from .NEM2AggregateCompleteTransaction import NEM2AggregateCompleteTransaction
+from .NEM2EmbeddedTransaction import NEM2EmbeddedTransaction
 from .NEM2GetPublicKey import NEM2GetPublicKey
 from .NEM2Mosaic import NEM2Mosaic
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction

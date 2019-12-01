@@ -23,6 +23,7 @@ TYPE_TRANSACTION_TRANSFER = 0x4154
 TYPE_MULTISIG_SIGNATURE = 0x1002
 TYPE_MOSAIC_DEFINITION = 0x414D
 TYPE_MOSAIC_SUPPLY_CHANGE = 0x424D
+TYPE_AGGREGATE_COMPLETE = 0x4141
 
 NETWORK_TYPE_MIJIN_TEST = 0x90
 NETWORK_TYPE_MIJIN = 0x60
@@ -91,7 +92,16 @@ def create_sign_tx(transaction):
     msg = proto.NEM2SignTx()
     msg.transaction = create_transaction_common(transaction)
 
-    fill_transaction_by_type(msg, transaction)
+    if transaction["type"] == TYPE_AGGREGATE_COMPLETE:
+        inner_txs = []
+        for tx in transaction["transactions"]:            
+            embedded_tx = proto.NEM2EmbeddedTransaction()
+            embedded_tx.transaction = create_transaction_common(tx["transaction"])
+            fill_transaction_by_type(embedded_tx, tx["transaction"])
+            inner_txs.append(embedded_tx)
+        msg.aggregate_complete = proto.NEM2AggregateCompleteTransaction(inner_txs)
+    else:
+        fill_transaction_by_type(msg, transaction)
 
     return msg
 
