@@ -6,7 +6,7 @@ from ubinascii import unhexlify, hexlify
 
 from apps.common import seed
 from apps.common.paths import validate_path
-from apps.nem2 import CURVE, transfer, mosaic, namespace
+from apps.nem2 import CURVE, transfer, mosaic, namespace, metadata
 from apps.nem2.helpers import NEM2_HASH_ALG, check_path, NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED, NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE
 from apps.nem2.validators import validate
 
@@ -44,6 +44,8 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         tx = await namespace.namespace_registration(ctx, common, msg.namespace_registration)
     elif msg.address_alias:
         tx = await namespace.address_alias(ctx, common, msg.address_alias)
+    elif msg.namespace_metadata:
+        tx = await metadata.namespace_metadata(ctx, common, msg.namespace_metadata)
     # elif msg.supply_change:
     #     tx = await mosaic.supply_change(ctx, public_key, common, msg.supply_change)
     # elif msg.aggregate_modification:

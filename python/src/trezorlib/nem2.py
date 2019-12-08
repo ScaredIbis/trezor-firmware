@@ -25,6 +25,7 @@ TYPE_MOSAIC_DEFINITION = 0x414D
 TYPE_MOSAIC_SUPPLY_CHANGE = 0x424D
 TYPE_NAMESPACE_REGISTRATION = 0x414E
 TYPE_ADDRESS_ALIAS = 0x424E
+TYPE_NAMESPACE_METADATA = 0x4344
 
 NAMESPACE_REGISTRATION_TYPE_ROOT = 0x00
 NAMESPACE_REGISTRATION_TYPE_CHILD = 0x01
@@ -113,6 +114,16 @@ def create_address_alias(transaction):
     msg.alias_action = transaction["aliasAction"]
     return msg
 
+def create_namespace_metadata(transaction):
+    msg = proto.NEM2NamespaceMetadataTransaction()
+    msg.target_public_key = transaction["targetPublicKey"]
+    msg.scoped_metadata_key = transaction["scopedMetadataKey"]
+    msg.target_namespace_id = transaction["targetNamespaceId"]
+    msg.value_size_delta = transaction["valueSizeDelta"]
+    msg.value_size = transaction["valueSize"]
+    msg.value = transaction["value"]
+    return msg
+
 def fill_transaction_by_type(msg, transaction):
     if transaction["type"] == TYPE_TRANSACTION_TRANSFER:
         msg.transfer = create_transfer(transaction)
@@ -124,6 +135,8 @@ def fill_transaction_by_type(msg, transaction):
         msg.namespace_registration = create_namespace_registration(transaction)
     if transaction["type"] == TYPE_ADDRESS_ALIAS:
         msg.address_alias = create_address_alias(transaction)
+    if transaction["type"] == TYPE_NAMESPACE_METADATA:
+        msg.namespace_metadata = create_namespace_metadata(transaction)
 
 
 def create_sign_tx(transaction):
