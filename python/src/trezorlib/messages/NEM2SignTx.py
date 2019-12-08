@@ -6,6 +6,7 @@ from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
+from .NEM2NamespaceMetadataTransaction import NEM2NamespaceMetadataTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2TransactionCommon import NEM2TransactionCommon
 from .NEM2TransferTransaction import NEM2TransferTransaction
@@ -34,6 +35,7 @@ class NEM2SignTx(p.MessageType):
         namespace_registration: NEM2NamespaceRegistrationTransaction = None,
         address_alias: NEM2AddressAliasTransaction = None,
         aggregate: NEM2AggregateTransaction = None,
+        namespace_metadata: NEM2NamespaceMetadataTransaction = None,
     ) -> None:
         self.transaction = transaction
         self.multisig = multisig
@@ -46,6 +48,7 @@ class NEM2SignTx(p.MessageType):
         self.namespace_registration = namespace_registration
         self.address_alias = address_alias
         self.aggregate = aggregate
+        self.namespace_metadata = namespace_metadata
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -61,4 +64,5 @@ class NEM2SignTx(p.MessageType):
             9: ('namespace_registration', NEM2NamespaceRegistrationTransaction, 0),
             10: ('address_alias', NEM2AddressAliasTransaction, 0),
             11: ('aggregate', NEM2AggregateTransaction, 0),
+            12: ('namespace_metadata', NEM2NamespaceMetadataTransaction, 0),
         }
