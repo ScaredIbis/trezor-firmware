@@ -42,6 +42,7 @@ message NEM2SignTx {
     optional bool cosigning = 6;
     optional NEM2MosaicDefinitionTransaction mosaic_definition = 7; // Mosaic Definition part
     optional NEM2MosaicSupplyChangeTransaction mosaic_supply = 8; // Mosaic Supply part
+    optional NEM2AggregateTransaction aggregate = 9; // Aggregate part
 
     /**
     * Common types from
@@ -62,6 +63,8 @@ message NEM2SignTx {
         TRANSFER = 16724;
         MOSAIC_DEFINITION = 16717;
         MOSAIC_SUPPLY_CHANGE = 16973;
+        AGGREGATE_BONDED = 16961;
+        AGGREGATE_COMPLETE = 16705;
     }
 
     enum NEM2NetworkType {
@@ -84,6 +87,17 @@ message NEM2SignTx {
         optional uint32 version = 3 [default=1]; // inline EntityBody, defined as uint16 in catbuffer
         optional string max_fee = 4;
         optional string deadline = 5;
+    }
+
+    /**
+    * Base Embedded Transaction attributes
+    * https://github.com/nemtech/catbuffer/blob/master/schemas/transaction.cats
+    */
+    message NEM2EmbeddedTransactionCommon {
+        optional NEM2EntityType type = 1; // inline EntityBody
+        optional NEM2NetworkType network_type = 2;
+        optional uint32 version = 3 [default=1]; // inline EntityBody, defined as uint16 in catbuffer
+        optional string public_key = 4;
     }
 
     /**
@@ -124,6 +138,36 @@ message NEM2SignTx {
         optional string mosaic_id = 1; // mosaic identifier
         optional uint32 action = 2; // supply change direction (increase/descrease)
         optional uint64 delta = 3; // change in supply
+    }
+
+    /**
+    * Aggregate transaction definition
+    * There is no difference between an aggregate completed
+    * and aggregate bonded transaction besides the "type"
+    * which is defined as part of TransactionCommon
+    */
+    message NEM2AggregateTransaction {
+        repeated NEM2InnerTransaction inner_transactions = 1;
+        repeated NEM2Cosignature cosignatures = 2;
+    }
+
+    /**
+    * Inner transaction type definition
+    * Used as part of an Aggregate transaction
+    */
+    message NEM2InnerTransaction {
+        optional NEM2EmbeddedTransactionCommon common = 1;
+        optional NEM2TransferTransaction transfer = 2;
+        optional NEM2MosaicDefinitionTransaction mosaic_definition = 3;
+        optional NEM2MosaicSupplyChangeTransaction mosaic_supply = 4;
+    }
+
+    /**
+    * Cosignature type definition
+    * Used as part of an Aggregate transaction
+    */
+    message NEM2Cosignature {
+        // TODO
     }
 }
 
