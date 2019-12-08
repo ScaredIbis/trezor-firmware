@@ -45,6 +45,7 @@ message NEM2SignTx {
     optional NEM2NamespaceRegistrationTransaction namespace_registration = 9; // Namespace registration part
     optional NEM2AddressAliasTransaction address_alias = 10; // Address Alias
     optional NEM2AggregateTransaction aggregate = 11; // Aggregate part
+    optional NEM2NamespaceMetadataTransaction namespace_metadata = 12; // Aggregate part
 
     /**
     * Common types from
@@ -69,6 +70,7 @@ message NEM2SignTx {
         ADDRESS_ALIAS = 16974;
         AGGREGATE_BONDED = 16961;
         AGGREGATE_COMPLETE = 16705;
+        NAMESPACE_METADATA = 17220;
     }
 
     enum NEM2NetworkType {
@@ -203,6 +205,18 @@ message NEM2SignTx {
     */
     message NEM2Cosignature {
         // TODO
+    }
+
+    /**
+    * Namespace metadata type definition
+    * https://nemtech.github.io/concepts/metadata.html#namespace-metadata-transaction
+    */
+    message NEM2NamespaceMetadataTransaction {
+        optional string target_public_key = 1; // target namespace owner public key
+        optional string scoped_metadata_key = 2; // metadata key (uint64)
+        optional uint32 value_size_delta = 3; // change in value size (in bytes)
+        optional uint32 value_size = 4; // new value size (in bytes)
+        optional string value = 5; // difference between previous value and new value
     }
 }
 
