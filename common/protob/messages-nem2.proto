@@ -42,7 +42,9 @@ message NEM2SignTx {
     optional bool cosigning = 6;
     optional NEM2MosaicDefinitionTransaction mosaic_definition = 7; // Mosaic Definition part
     optional NEM2MosaicSupplyChangeTransaction mosaic_supply = 8; // Mosaic Supply part
-    optional NEM2AggregateTransaction aggregate = 9; // Aggregate part
+    optional NEM2NamespaceRegistrationTransaction namespace_registration = 9; // Namespace registration part
+    optional NEM2AddressAliasTransaction address_alias = 10; // Address Alias
+    optional NEM2AggregateTransaction aggregate = 11; // Aggregate part
 
     /**
     * Common types from
@@ -63,6 +65,8 @@ message NEM2SignTx {
         TRANSFER = 16724;
         MOSAIC_DEFINITION = 16717;
         MOSAIC_SUPPLY_CHANGE = 16973;
+        NAMESPACE_REGISTRATION = 16718;
+        ADDRESS_ALIAS = 16974;
         AGGREGATE_BONDED = 16961;
         AGGREGATE_COMPLETE = 16705;
     }
@@ -72,6 +76,16 @@ message NEM2SignTx {
         TEST_NET = 152;
         MIJIN = 96;
         MIJIN_TEST = 144;
+    }
+
+    enum NEM2NamespaceRegistrationType {
+        ROOT = 0;
+        CHILD = 1;
+    }
+
+    enum NEM2AliasAction {
+        LINK = 1;
+        UNLINK = 0;
     }
 
     // END entities
@@ -85,8 +99,8 @@ message NEM2SignTx {
         optional NEM2EntityType type = 1; // inline EntityBody
         optional NEM2NetworkType network_type = 2;
         optional uint32 version = 3 [default=1]; // inline EntityBody, defined as uint16 in catbuffer
-        optional string max_fee = 4;
-        optional string deadline = 5;
+        optional string max_fee = 4; // uint64
+        optional string deadline = 5; // uint64
     }
 
     /**
@@ -105,7 +119,7 @@ message NEM2SignTx {
     * https://github.com/nemtech/catbuffer/blob/master/schemas/transaction.cats
     */
     message NEM2TransferTransaction {
-        optional NEM2RecipientAddress recipient_address = 1;
+        optional NEM2Address recipient_address = 1;
         optional NEM2TransferMessage message = 2;
         repeated NEM2Mosaic mosaics = 3;
     }
@@ -115,7 +129,7 @@ message NEM2SignTx {
         optional uint32 type = 2;
     }
 
-    message NEM2RecipientAddress {
+    message NEM2Address {
         optional string address = 1;
         optional uint32 network_type = 2;
     }
@@ -138,6 +152,27 @@ message NEM2SignTx {
         optional string mosaic_id = 1; // mosaic identifier
         optional uint32 action = 2; // supply change direction (increase/descrease)
         optional uint64 delta = 3; // change in supply
+    }
+
+    /**
+    * Namespace Registration transaction definition
+    */
+    message NEM2NamespaceRegistrationTransaction {
+        optional string duration = 1; // namespace duration (uint64)
+        optional string parent_id = 2; // parent namespace identifier (uint64)
+        optional string id = 3; // identifier (uint64)
+        optional NEM2NamespaceRegistrationType registration_type = 4 [default=ROOT];
+        optional uint32 name_size = 5; // length of name (bytes) (uint8 in catbuffer)
+        optional string namespace_name = 6; // namespace name
+    }
+
+    /**
+    * Namespace Address Alias
+    */
+    message NEM2AddressAliasTransaction {
+        optional string namespace_id = 1; // namespace identifier (uint64)
+        optional NEM2Address address = 2; // address to link/unlink namespace to
+        optional NEM2AliasAction alias_action = 3 [default=LINK];
     }
 
     /**

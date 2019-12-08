@@ -25,7 +25,7 @@ from ..common import MNEMONIC12
 @pytest.mark.nem2
 class TestMsgNEM2SignTxTransfer:
     @pytest.mark.setup_client(mnemonic=MNEMONIC12)
-    def test_nem2_signtx_simple(self, client):
+    def test_nem2_signtx_transfer(self, client):
         tx = nem2.sign_tx(
             client,
             parse_path("m/44'/43'/0'"),

@@ -170,6 +170,8 @@ from .MoneroTransactionSourceEntry import MoneroTransactionSourceEntry
 from .MoneroTransferDetails import MoneroTransferDetails
 from .MoneroWatchKey import MoneroWatchKey
 from .MultisigRedeemScriptType import MultisigRedeemScriptType
+from .NEM2Address import NEM2Address
+from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2Cosignature import NEM2Cosignature
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
@@ -178,8 +180,8 @@ from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2Mosaic import NEM2Mosaic
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
+from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2PublicKey import NEM2PublicKey
-from .NEM2RecipientAddress import NEM2RecipientAddress
 from .NEM2SignTx import NEM2SignTx
 from .NEM2SignedTx import NEM2SignedTx
 from .NEM2TransactionCommon import NEM2TransactionCommon
@@ -282,7 +284,9 @@ from . import FailureType
 from . import InputScriptType
 from . import LiskTransactionType
 from . import MessageType
+from . import NEM2AliasAction
 from . import NEM2EntityType
+from . import NEM2NamespaceRegistrationType
 from . import NEM2NetworkType
 from . import NEMImportanceTransferMode
 from . import NEMModificationType

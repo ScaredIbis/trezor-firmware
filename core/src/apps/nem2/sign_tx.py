@@ -6,7 +6,7 @@ from ubinascii import unhexlify, hexlify
 
 from apps.common import seed
 from apps.common.paths import validate_path
-from apps.nem2 import CURVE, transfer, mosaic, aggregate
+from apps.nem2 import CURVE, transfer, mosaic, namespace, aggregate
 from apps.nem2.helpers import NEM2_HASH_ALG, check_path, NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED, NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE
 from apps.nem2.validators import validate
 
@@ -25,13 +25,11 @@ def is_aggregate_transaction(tx_type):
         tx_type == NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE)
 
 def get_signing_bytes(payload_buffer_without_header, generation_hash_bytes, tx_type):
-    print('payload_buffer_without_header', hexlify(payload_buffer_without_header))
     if is_aggregate_transaction(tx_type):
         return generation_hash_bytes + payload_buffer_without_header[:52]
     return generation_hash_bytes + payload_buffer_without_header
 
 async def sign_tx(ctx, msg: NEM2SignTx, keychain):
-    print("signing nem2 transaction", msg)
     validate(msg)
 
     await validate_path(
@@ -53,16 +51,17 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         common = msg.transaction
 
     if msg.transfer:
-        tx = await transfer.transfer(ctx, public_key, common, msg.transfer, node)
+        tx = await transfer.transfer(ctx, public_key, common, msg.transfer)
     elif msg.mosaic_definition:
         tx = await mosaic.mosaic_definition(ctx, public_key, common, msg.mosaic_definition)
     elif msg.mosaic_supply:
         tx = await mosaic.mosaic_supply(ctx, common, msg.mosaic_supply)
+    elif msg.namespace_registration:
+        tx = await namespace.namespace_registration(ctx, common, msg.namespace_registration)
+    elif msg.address_alias:
+        tx = await namespace.address_alias(ctx, common, msg.address_alias)
     elif msg.aggregate:
         tx = await aggregate.aggregate(ctx, common, msg.aggregate)
-        # tx = await mosaic.mosaic_supply(ctx, common, msg.mosaic_supply)
-    # elif msg.provision_namespace:
-    #     tx = await namespace.namespace(ctx, public_key, common, msg.provision_namespace)
     # elif msg.supply_change:
     #     tx = await mosaic.supply_change(ctx, public_key, common, msg.supply_change)
     # elif msg.aggregate_modification:
