@@ -14,21 +14,19 @@ if __debug__:
         EnumTypeNEM2NetworkType = None  # type: ignore
 
 
-class NEM2TransactionCommon(p.MessageType):
+class NEM2EmbeddedTransactionCommon(p.MessageType):
 
     def __init__(
         self,
         type: EnumTypeNEM2EntityType = None,
         network_type: EnumTypeNEM2NetworkType = None,
         version: int = None,
-        max_fee: str = None,
-        deadline: str = None,
+        public_key: str = None,
     ) -> None:
         self.type = type
         self.network_type = network_type
         self.version = version
-        self.max_fee = max_fee
-        self.deadline = deadline
+        self.public_key = public_key
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -36,6 +34,5 @@ class NEM2TransactionCommon(p.MessageType):
             1: ('type', p.EnumType("NEM2EntityType", (0, 16961, 16705, 16973, 16717, 16718, 16974, 16724)), 0),
             2: ('network_type', p.EnumType("NEM2NetworkType", (104, 144, 96, 152)), 0),
             3: ('version', p.UVarintType, 0),  # default=1
-            4: ('max_fee', p.UnicodeType, 0),
-            5: ('deadline', p.UnicodeType, 0),
+            4: ('public_key', p.UnicodeType, 0),
         }
