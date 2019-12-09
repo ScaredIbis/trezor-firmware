@@ -27,6 +27,7 @@ TYPE_AGGREGATE_BONDED = 0x4241
 TYPE_AGGREGATE_COMPLETE = 0x4141
 TYPE_NAMESPACE_REGISTRATION = 0x414E
 TYPE_ADDRESS_ALIAS = 0x424E
+TYPE_MOSAIC_ALIAS = 0x434E
 
 NAMESPACE_REGISTRATION_TYPE_ROOT = 0x00
 NAMESPACE_REGISTRATION_TYPE_CHILD = 0x01
@@ -126,6 +127,13 @@ def create_namespace_registration(transaction):
     msg.namespace_name = transaction["namespaceName"]
     return msg
 
+def create_mosaic_alias(transaction):
+    msg = proto.NEM2MosaicAliasTransaction()
+    msg.namespace_id = transaction["namespaceId"]
+    msg.mosaic_id = transaction["mosaicId"]
+    msg.alias_action = transaction["aliasAction"]
+    return msg
+
 def create_address_alias(transaction):
     msg = proto.NEM2AddressAliasTransaction()
     msg.namespace_id = transaction["namespaceId"]
@@ -147,6 +155,8 @@ def fill_transaction_by_type(msg, transaction):
         msg.aggregate = create_aggregate(transaction)
     if transaction["type"] == TYPE_NAMESPACE_REGISTRATION:
         msg.namespace_registration = create_namespace_registration(transaction)
+    if transaction["type"] == TYPE_MOSAIC_ALIAS:
+        msg.mosaic_alias = create_mosaic_alias(transaction)
     if transaction["type"] == TYPE_ADDRESS_ALIAS:
         msg.address_alias = create_address_alias(transaction)
 

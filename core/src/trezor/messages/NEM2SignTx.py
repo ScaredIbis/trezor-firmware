@@ -4,6 +4,7 @@ import protobuf as p
 
 from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
+from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
@@ -34,6 +35,7 @@ class NEM2SignTx(p.MessageType):
         namespace_registration: NEM2NamespaceRegistrationTransaction = None,
         address_alias: NEM2AddressAliasTransaction = None,
         aggregate: NEM2AggregateTransaction = None,
+        mosaic_alias: NEM2MosaicAliasTransaction = None,
     ) -> None:
         self.transaction = transaction
         self.multisig = multisig
@@ -46,6 +48,7 @@ class NEM2SignTx(p.MessageType):
         self.namespace_registration = namespace_registration
         self.address_alias = address_alias
         self.aggregate = aggregate
+        self.mosaic_alias = mosaic_alias
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -61,4 +64,5 @@ class NEM2SignTx(p.MessageType):
             9: ('namespace_registration', NEM2NamespaceRegistrationTransaction, 0),
             10: ('address_alias', NEM2AddressAliasTransaction, 0),
             11: ('aggregate', NEM2AggregateTransaction, 0),
+            12: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
         }

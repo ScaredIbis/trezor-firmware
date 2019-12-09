@@ -60,6 +60,8 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         tx = await namespace.namespace_registration(ctx, common, msg.namespace_registration)
     elif msg.address_alias:
         tx = await namespace.address_alias(ctx, common, msg.address_alias)
+    elif msg.mosaic_alias:
+        tx = await namespace.mosaic_alias(ctx, common, msg.mosaic_alias)
     elif msg.aggregate:
         tx = await aggregate.aggregate(ctx, common, msg.aggregate)
     # elif msg.supply_change:
