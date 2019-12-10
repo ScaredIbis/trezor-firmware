@@ -23,8 +23,11 @@ TYPE_TRANSACTION_TRANSFER = 0x4154
 TYPE_MULTISIG_SIGNATURE = 0x1002
 TYPE_MOSAIC_DEFINITION = 0x414D
 TYPE_MOSAIC_SUPPLY_CHANGE = 0x424D
+TYPE_AGGREGATE_BONDED = 0x4241
+TYPE_AGGREGATE_COMPLETE = 0x4141
 TYPE_NAMESPACE_REGISTRATION = 0x414E
 TYPE_ADDRESS_ALIAS = 0x424E
+TYPE_MOSAIC_ALIAS = 0x434E
 
 NAMESPACE_REGISTRATION_TYPE_ROOT = 0x00
 NAMESPACE_REGISTRATION_TYPE_CHILD = 0x01
@@ -50,6 +53,14 @@ def create_transaction_common(transaction):
 
     return msg
 
+def create_embedded_transaction_common(transaction):
+    msg = proto.NEM2EmbeddedTransactionCommon()
+    msg.type = transaction["type"]
+    msg.network_type = transaction["network"]
+    msg.version = transaction["version"]
+    msg.public_key = transaction["publicKey"]
+
+    return msg
 
 def create_transfer(transaction):
     msg = proto.NEM2TransferTransaction()
@@ -92,6 +103,19 @@ def create_mosaic_supply(transaction):
     msg.action = transaction["action"]
     return msg
 
+def create_aggregate(aggregate_transaction):
+    msg = proto.NEM2AggregateTransaction()
+    # Generate inner transactions
+    inner_transactions = []
+    for transaction in aggregate_transaction["innerTransactions"]:
+        inner_transaction = proto.NEM2InnerTransaction()
+        inner_transaction.common = create_embedded_transaction_common(transaction)
+        fill_transaction_by_type(inner_transaction, transaction)
+        inner_transactions.append(inner_transaction)
+
+    msg.inner_transactions = inner_transactions
+    return msg
+
 def create_namespace_registration(transaction):
     msg = proto.NEM2NamespaceRegistrationTransaction()
     msg.registration_type = transaction["registrationType"]
@@ -101,6 +125,13 @@ def create_namespace_registration(transaction):
         msg.parent_id = transaction["parentId"] # cast in case payload represents uint64 in string format
     msg.id = transaction["id"]
     msg.namespace_name = transaction["namespaceName"]
+    return msg
+
+def create_mosaic_alias(transaction):
+    msg = proto.NEM2MosaicAliasTransaction()
+    msg.namespace_id = transaction["namespaceId"]
+    msg.mosaic_id = transaction["mosaicId"]
+    msg.alias_action = transaction["aliasAction"]
     return msg
 
 def create_address_alias(transaction):
@@ -120,8 +151,12 @@ def fill_transaction_by_type(msg, transaction):
         msg.mosaic_definition = create_mosaic_definition(transaction)
     if transaction["type"] == TYPE_MOSAIC_SUPPLY_CHANGE:
         msg.mosaic_supply = create_mosaic_supply(transaction)
+    if transaction["type"] == TYPE_AGGREGATE_BONDED or transaction["type"] == TYPE_AGGREGATE_COMPLETE:
+        msg.aggregate = create_aggregate(transaction)
     if transaction["type"] == TYPE_NAMESPACE_REGISTRATION:
         msg.namespace_registration = create_namespace_registration(transaction)
+    if transaction["type"] == TYPE_MOSAIC_ALIAS:
+        msg.mosaic_alias = create_mosaic_alias(transaction)
     if transaction["type"] == TYPE_ADDRESS_ALIAS:
         msg.address_alias = create_address_alias(transaction)
 

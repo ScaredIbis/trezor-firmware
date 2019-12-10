@@ -45,6 +45,7 @@ message NEM2SignTx {
     optional NEM2NamespaceRegistrationTransaction namespace_registration = 9; // Namespace registration part
     optional NEM2AddressAliasTransaction address_alias = 10; // Address Alias
     optional NEM2AggregateTransaction aggregate = 11; // Aggregate part
+    optional NEM2MosaicAliasTransaction mosaic_alias = 12; // Mosaic Alias part
 
     /**
     * Common types from
@@ -69,6 +70,7 @@ message NEM2SignTx {
         ADDRESS_ALIAS = 16974;
         AGGREGATE_BONDED = 16961;
         AGGREGATE_COMPLETE = 16705;
+        MOSAIC_ALIAS = 17230;
     }
 
     enum NEM2NetworkType {
@@ -173,6 +175,15 @@ message NEM2SignTx {
         optional string namespace_id = 1; // namespace identifier (uint64)
         optional NEM2Address address = 2; // address to link/unlink namespace to
         optional NEM2AliasAction alias_action = 3 [default=LINK];
+    }
+
+    /**
+    * Mosaic Alias transaction type definition
+    */
+    message NEM2MosaicAliasTransaction {
+        optional NEM2AliasAction alias_action = 1;
+        optional string namespace_id = 2;
+        optional string mosaic_id = 3;
     }
 
     /**

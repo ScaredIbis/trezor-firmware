@@ -6,6 +6,7 @@ from trezor.messages import (
     NEM2TransferTransaction,
 )
 from trezor.ui.text import Text
+from trezor.ui.scroll import Paginated
 from trezor.utils import format_amount
 
 from ..helpers import (
@@ -21,7 +22,7 @@ from apps.common.confirm import require_confirm
 from apps.common.layout import split_address
 
 async def ask_namespace_registration(
-    ctx, common: NEM2TransactionCommon, namespace_registration: NEM2NamespaceRegistrationTransaction
+    ctx, common: NEM2TransactionCommon, namespace_registration: NEM2NamespaceRegistrationTransaction, embedded=False
 ):
 
     # confirm name and id
@@ -45,10 +46,11 @@ async def ask_namespace_registration(
         msg.bold(namespace_registration.parent_id.upper())
     await require_confirm(ctx, msg, ButtonRequestType.ConfirmOutput)
 
-    await require_confirm_final(ctx, common.max_fee)
+    if not embedded:
+        await require_confirm_final(ctx, common.max_fee)
 
 async def ask_address_alias(
-    ctx, common: NEM2TransactionCommon, address_alias: NEM2NamespaceRegistrationTransaction
+    ctx, common: NEM2TransactionCommon, address_alias: NEM2NamespaceRegistrationTransaction, embedded=False
 ):
 
     # confirm namespace id
@@ -68,5 +70,44 @@ async def ask_address_alias(
     msg.mono(*split_address(address_alias.address.address))
     await require_confirm(ctx, msg, ButtonRequestType.ConfirmOutput)
 
+    if not embedded:
+        await require_confirm_final(ctx, common.max_fee)
+
+async def ask_mosaic_alias(
+    ctx, common: NEM2TransactionCommon, creation: NEM2MosaicAliasTransaction
+):
+    await require_confirm_properties(ctx, creation)
     await require_confirm_final(ctx, common.max_fee)
 
+async def require_confirm_properties(ctx, creation: NEM2MosaicAliasTransaction):
+    properties = []
+
+    # Mosaic ID
+    if creation.mosaic_id:
+        t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
+        t.bold("Mosaic Id:")
+        t.br()
+        t.normal(creation.mosaic_id)
+        properties.append(t)
+
+    # Namespace ID
+    if creation.namespace_id:
+        t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
+        t.bold("Namespace Id:")
+        t.br()
+        t.normal(creation.namespace_id)
+        properties.append(t)
+    # Alias Action
+    if creation.alias_action:
+        if creation.alias_action:
+            alias_text = "Link"
+        else:
+            alias_text = "Unlink"
+        t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
+        t.bold("Alias Action:")
+        t.br()
+        t.normal('{} ({})'.format(alias_text, creation.alias_action))
+        properties.append(t)
+
+    paginated = Paginated(properties)
+    await require_confirm(ctx, paginated, ButtonRequestType.ConfirmOutput)
