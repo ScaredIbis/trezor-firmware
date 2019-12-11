@@ -185,6 +185,7 @@ from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2PublicKey import NEM2PublicKey
 from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
+from .NEM2SecretProofTransaction import NEM2SecretProofTransaction
 from .NEM2SignTx import NEM2SignTx
 from .NEM2SignedTx import NEM2SignedTx
 from .NEM2TransactionCommon import NEM2TransactionCommon
