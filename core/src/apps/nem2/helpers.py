@@ -14,6 +14,7 @@ NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE = const(0x4141)
 NEM2_TRANSACTION_TYPE_NAMESPACE_REGISTRATION = const(0x414E)
 NEM2_TRANSACTION_TYPE_ADDRESS_ALIAS = const(0x424E)
 NEM2_TRANSACTION_TYPE_NAMESPACE_METADATA = const(0x4344)
+NEM2_TRANSACTION_TYPE_MOSAIC_ALIAS = const(0x434E)
 
 NEM2_NAMESPACE_REGISTRATION_TYPE_ROOT = const(0x00)
 NEM2_NAMESPACE_REGISTRATION_TYPE_SUB = const(0x01)
@@ -47,3 +48,8 @@ def validate_nem2_path(path: list) -> bool:
     if path[2] < HARDENED or path[2] > 1000000 | HARDENED:
         return False
     return True
+
+def captialize_string(s):
+    s = list(s)
+    s[0] = s[0].upper()
+    return "".join(s)

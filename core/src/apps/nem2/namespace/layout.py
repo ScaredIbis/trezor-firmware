@@ -97,3 +97,35 @@ async def ask_address_alias(
     if not embedded:
         await require_confirm_final(ctx, common.max_fee)
 
+async def require_confirm_properties(ctx, creation: NEM2MosaicAliasTransaction):
+    properties = []
+
+    # Mosaic ID
+    if creation.mosaic_id:
+        t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
+        t.bold("Mosaic Id:")
+        t.br()
+        t.normal(creation.mosaic_id)
+        properties.append(t)
+
+    # Namespace ID
+    if creation.namespace_id:
+        t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
+        t.bold("Namespace Id:")
+        t.br()
+        t.normal(creation.namespace_id)
+        properties.append(t)
+    # Alias Action
+    if creation.alias_action:
+        if creation.alias_action:
+            alias_text = "Link"
+        else:
+            alias_text = "Unlink"
+        t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
+        t.bold("Alias Action:")
+        t.br()
+        t.normal('{} ({})'.format(alias_text, creation.alias_action))
+        properties.append(t)
+
+    paginated = Paginated(properties)
+    await require_confirm(ctx, paginated, ButtonRequestType.ConfirmOutput)
