@@ -28,7 +28,7 @@ from apps.common.writers import (
 def serialize_namespace_registration(
     common: NEM2TransactionCommon | NEM2EmbeddedTransactionCommon,
     namespace_registration: NEM2NamespaceRegistrationTransaction,
-    embedded = False
+    embedded=False
 ) -> bytearray:
     tx = bytearray()
 
@@ -78,7 +78,7 @@ def get_namespace_registration_body_size(namespace_registration: NEM2NamespaceRe
 def serialize_address_alias(
     common: NEM2TransactionCommon,
     address_alias: NEM2AddressAliasTransaction,
-    embedded = False
+    embedded=False
 ) -> bytearray:
     tx = bytearray()
 
