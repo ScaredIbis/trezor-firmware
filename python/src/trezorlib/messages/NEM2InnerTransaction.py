@@ -2,9 +2,15 @@
 # fmt: off
 from .. import protobuf as p
 
+from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
+from .NEM2HashLockTransaction import NEM2HashLockTransaction
+from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
+from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
+from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
+from .NEM2SecretProofTransaction import NEM2SecretProofTransaction
 from .NEM2TransferTransaction import NEM2TransferTransaction
 
 if __debug__:
@@ -23,11 +29,23 @@ class NEM2InnerTransaction(p.MessageType):
         transfer: NEM2TransferTransaction = None,
         mosaic_definition: NEM2MosaicDefinitionTransaction = None,
         mosaic_supply: NEM2MosaicSupplyChangeTransaction = None,
+        namespace_registration: NEM2NamespaceRegistrationTransaction = None,
+        address_alias: NEM2AddressAliasTransaction = None,
+        mosaic_alias: NEM2MosaicAliasTransaction = None,
+        hash_lock: NEM2HashLockTransaction = None,
+        secret_lock: NEM2SecretLockTransaction = None,
+        secret_proof: NEM2SecretProofTransaction = None,
     ) -> None:
         self.common = common
         self.transfer = transfer
         self.mosaic_definition = mosaic_definition
         self.mosaic_supply = mosaic_supply
+        self.namespace_registration = namespace_registration
+        self.address_alias = address_alias
+        self.mosaic_alias = mosaic_alias
+        self.hash_lock = hash_lock
+        self.secret_lock = secret_lock
+        self.secret_proof = secret_proof
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -36,4 +54,10 @@ class NEM2InnerTransaction(p.MessageType):
             2: ('transfer', NEM2TransferTransaction, 0),
             3: ('mosaic_definition', NEM2MosaicDefinitionTransaction, 0),
             4: ('mosaic_supply', NEM2MosaicSupplyChangeTransaction, 0),
+            5: ('namespace_registration', NEM2NamespaceRegistrationTransaction, 0),
+            6: ('address_alias', NEM2AddressAliasTransaction, 0),
+            7: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
+            8: ('hash_lock', NEM2HashLockTransaction, 0),
+            9: ('secret_lock', NEM2SecretLockTransaction, 0),
+            10: ('secret_proof', NEM2SecretProofTransaction, 0),
         }

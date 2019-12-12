@@ -176,6 +176,7 @@ from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2Cosignature import NEM2Cosignature
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2GetPublicKey import NEM2GetPublicKey
+from .NEM2HashLockTransaction import NEM2HashLockTransaction
 from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2Mosaic import NEM2Mosaic
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
@@ -183,6 +184,8 @@ from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2PublicKey import NEM2PublicKey
+from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
+from .NEM2SecretProofTransaction import NEM2SecretProofTransaction
 from .NEM2SignTx import NEM2SignTx
 from .NEM2SignedTx import NEM2SignedTx
 from .NEM2TransactionCommon import NEM2TransactionCommon
@@ -287,6 +290,8 @@ from . import LiskTransactionType
 from . import MessageType
 from . import NEM2AliasAction
 from . import NEM2EntityType
+from . import NEM2LockHashAlgorithm
+from . import NEM2MosaicSupplyChangeAction
 from . import NEM2NamespaceRegistrationType
 from . import NEM2NetworkType
 from . import NEMImportanceTransferMode

@@ -46,6 +46,9 @@ message NEM2SignTx {
     optional NEM2AddressAliasTransaction address_alias = 10; // Address Alias
     optional NEM2AggregateTransaction aggregate = 11; // Aggregate part
     optional NEM2MosaicAliasTransaction mosaic_alias = 12; // Mosaic Alias part
+    optional NEM2HashLockTransaction hash_lock = 13; // Hash Lock part
+    optional NEM2SecretLockTransaction secret_lock = 14; // Secret Lock part
+    optional NEM2SecretProofTransaction secret_proof = 15; // Secret Proof part
 
     /**
     * Common types from
@@ -71,6 +74,9 @@ message NEM2SignTx {
         AGGREGATE_BONDED = 16961;
         AGGREGATE_COMPLETE = 16705;
         MOSAIC_ALIAS = 17230;
+        HASH_LOCK = 16712;
+        SECRET_LOCK = 16722;
+        SECRET_PROOF = 16978;
     }
 
     enum NEM2NetworkType {
@@ -88,6 +94,18 @@ message NEM2SignTx {
     enum NEM2AliasAction {
         LINK = 1;
         UNLINK = 0;
+    }
+
+    enum NEM2MosaicSupplyChangeAction {
+        INCREASE = 1;
+        DECREASE = 0;
+    }
+
+    enum NEM2LockHashAlgorithm {
+        SHA3_256 = 0; // Proof is hashed using SHA3-256.
+        KECCAK_256 = 1; // Proof is hashed using Keccak (ETH compatibility).
+        HASH_160 = 2; // Proof is hashed twice: first with SHA-256 and then with RIPEMD-160 (bitcoin’s OP_HASH160).
+        HASH_256 = 3; // Proof is hashed twice with SHA-256 (bitcoin’s OP_HASH256).
     }
 
     // END entities
@@ -152,7 +170,7 @@ message NEM2SignTx {
     */
     message NEM2MosaicSupplyChangeTransaction {
         optional string mosaic_id = 1; // mosaic identifier
-        optional uint32 action = 2; // supply change direction (increase/descrease)
+        optional NEM2MosaicSupplyChangeAction action = 2 [default=INCREASE]; // supply change direction (increase/descrease)
         optional uint64 delta = 3; // change in supply
     }
 
@@ -181,9 +199,39 @@ message NEM2SignTx {
     * Mosaic Alias transaction type definition
     */
     message NEM2MosaicAliasTransaction {
-        optional NEM2AliasAction alias_action = 1;
+        optional NEM2AliasAction alias_action = 1 [default=LINK];
         optional string namespace_id = 2;
         optional string mosaic_id = 3;
+    }
+
+    /**
+    * Hash Lock transaction type definition
+    */
+    message NEM2HashLockTransaction {
+        optional NEM2Mosaic mosaic = 1;
+        optional uint64 duration = 2;
+        optional string hash = 3;
+    }
+
+    /**
+    * Secret Lock transaction type definition
+    */
+    message NEM2SecretLockTransaction {
+        optional string secret = 1;
+        optional NEM2Mosaic mosaic = 2;
+        optional uint64 duration = 3;
+        optional NEM2LockHashAlgorithm hash_algorithm = 4 [default=SHA3_256];
+        optional NEM2Address recipient_address = 5;
+    }
+
+    /**
+    * Secret Proof transaction type definition
+    */
+    message NEM2SecretProofTransaction {
+        optional string secret = 1;
+        optional NEM2LockHashAlgorithm hash_algorithm = 2 [default=SHA3_256];
+        optional NEM2Address recipient_address = 3;
+        optional string proof = 4;
     }
 
     /**
@@ -206,6 +254,12 @@ message NEM2SignTx {
         optional NEM2TransferTransaction transfer = 2;
         optional NEM2MosaicDefinitionTransaction mosaic_definition = 3;
         optional NEM2MosaicSupplyChangeTransaction mosaic_supply = 4;
+        optional NEM2NamespaceRegistrationTransaction namespace_registration = 5;
+        optional NEM2AddressAliasTransaction address_alias = 6;
+        optional NEM2MosaicAliasTransaction mosaic_alias = 7;
+        optional NEM2HashLockTransaction hash_lock = 8;
+        optional NEM2SecretLockTransaction secret_lock = 9;
+        optional NEM2SecretProofTransaction secret_proof = 10;
     }
 
     /**

@@ -4,10 +4,13 @@ from .. import protobuf as p
 
 from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
+from .NEM2HashLockTransaction import NEM2HashLockTransaction
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
+from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
+from .NEM2SecretProofTransaction import NEM2SecretProofTransaction
 from .NEM2TransactionCommon import NEM2TransactionCommon
 from .NEM2TransferTransaction import NEM2TransferTransaction
 
@@ -36,6 +39,9 @@ class NEM2SignTx(p.MessageType):
         address_alias: NEM2AddressAliasTransaction = None,
         aggregate: NEM2AggregateTransaction = None,
         mosaic_alias: NEM2MosaicAliasTransaction = None,
+        hash_lock: NEM2HashLockTransaction = None,
+        secret_lock: NEM2SecretLockTransaction = None,
+        secret_proof: NEM2SecretProofTransaction = None,
     ) -> None:
         self.transaction = transaction
         self.multisig = multisig
@@ -49,6 +55,9 @@ class NEM2SignTx(p.MessageType):
         self.address_alias = address_alias
         self.aggregate = aggregate
         self.mosaic_alias = mosaic_alias
+        self.hash_lock = hash_lock
+        self.secret_lock = secret_lock
+        self.secret_proof = secret_proof
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -65,4 +74,7 @@ class NEM2SignTx(p.MessageType):
             10: ('address_alias', NEM2AddressAliasTransaction, 0),
             11: ('aggregate', NEM2AggregateTransaction, 0),
             12: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
+            13: ('hash_lock', NEM2HashLockTransaction, 0),
+            14: ('secret_lock', NEM2SecretLockTransaction, 0),
+            15: ('secret_proof', NEM2SecretProofTransaction, 0),
         }
