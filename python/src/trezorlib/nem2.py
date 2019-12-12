@@ -29,12 +29,23 @@ TYPE_NAMESPACE_REGISTRATION = 0x414E
 TYPE_ADDRESS_ALIAS = 0x424E
 TYPE_NAMESPACE_METADATA = 0x4344
 TYPE_MOSAIC_ALIAS = 0x434E
+TYPE_HASH_LOCK = 0x4148
+TYPE_SECRET_LOCK = 0x4152
+TYPE_SECRET_PROOF = 0x4252
 
 NAMESPACE_REGISTRATION_TYPE_ROOT = 0x00
 NAMESPACE_REGISTRATION_TYPE_CHILD = 0x01
 
 ALIAS_ACTION_TYPE_LINK = 0x01
 ALIAS_ACTION_TYPE_UNLINK = 0x00
+
+MOSAIC_SUPPLY_CHANGE_ACTION_INCREASE = 0x01
+MOSAIC_SUPPLY_CHANGE_ACTION_DECREASE = 0x00
+
+SECRET_LOCK_SHA3_256 = 0x00
+SECRET_LOCK_KECCAK_256 = 0x01
+SECRET_LOCK_HASH_160 = 0x02
+ECRET_LOCK_HASH_256 = 0x03
 
 NETWORK_TYPE_MIJIN_TEST = 0x90
 NETWORK_TYPE_MIJIN = 0x60
@@ -155,6 +166,42 @@ def create_namespace_metadata(transaction):
     msg.value = transaction["value"]
     return msg
 
+def create_hash_lock(transaction):
+    msg = proto.NEM2HashLockTransaction()
+    msg.mosaic = proto.NEM2Mosaic(
+        id=transaction["mosaic"]["id"],
+        amount=transaction["mosaic"]["amount"],
+    )
+    msg.duration = int(transaction["duration"])
+    msg.hash = transaction["hash"]
+    return msg
+
+def create_secret_lock(transaction):
+    msg = proto.NEM2SecretLockTransaction()
+    msg.mosaic = proto.NEM2Mosaic(
+        id=transaction["mosaic"]["id"],
+        amount=transaction["mosaic"]["amount"],
+    )
+    msg.recipient_address = proto.NEM2Address(
+        address=transaction["recipientAddress"]["address"],
+        network_type=transaction["recipientAddress"]["networkType"],
+    )
+    msg.duration = int(transaction["duration"])
+    msg.hash_algorithm = int(transaction["hashType"])
+    msg.secret = transaction["secret"]
+    return msg
+
+def create_secret_proof(transaction):
+    msg = proto.NEM2SecretProofTransaction()
+    msg.recipient_address = proto.NEM2Address(
+        address=transaction["recipientAddress"]["address"],
+        network_type=transaction["recipientAddress"]["networkType"],
+    )
+    msg.proof = transaction["proof"]
+    msg.hash_algorithm = int(transaction["hashType"])
+    msg.secret = transaction["secret"]
+    return msg
+
 def fill_transaction_by_type(msg, transaction):
     if transaction["type"] == TYPE_TRANSACTION_TRANSFER:
         msg.transfer = create_transfer(transaction)
@@ -172,6 +219,12 @@ def fill_transaction_by_type(msg, transaction):
         msg.address_alias = create_address_alias(transaction)
     if transaction["type"] == TYPE_NAMESPACE_METADATA:
         msg.namespace_metadata = create_namespace_metadata(transaction)
+    if transaction["type"] == TYPE_HASH_LOCK:
+        msg.hash_lock = create_hash_lock(transaction)
+    if transaction["type"] == TYPE_SECRET_LOCK:
+        msg.secret_lock = create_secret_lock(transaction)
+    if transaction["type"] == TYPE_SECRET_PROOF:
+        msg.secret_proof = create_secret_proof(transaction)
 
 
 def create_sign_tx(transaction):

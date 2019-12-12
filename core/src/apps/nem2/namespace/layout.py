@@ -1,13 +1,14 @@
 from trezor import ui
-from trezor.messages import (
-    ButtonRequestType,
-    NEM2Mosaic,
-    NEM2TransactionCommon,
-    NEM2TransferTransaction,
-)
+
+from trezor.messages import ButtonRequestType
+from trezor.messages.NEM2TransactionCommon import NEM2TransactionCommon
+from trezor.messages.NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
+from trezor.messages.NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
+from trezor.messages.NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
+from trezor.messages.NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
+
 from trezor.ui.text import Text
 from trezor.ui.scroll import Paginated
-from trezor.utils import format_amount
 
 from ..helpers import (
     NEM2_NAMESPACE_REGISTRATION_TYPE_ROOT,
@@ -15,15 +16,14 @@ from ..helpers import (
     NEM2_ALIAS_ACTION_TYPE_LINK,
     NEM2_ALIAS_ACTION_TYPE_UNLINK,
 )
-from ..layout import require_confirm_final, require_confirm_text
-from ..mosaic.helpers import get_mosaic_definition, is_nem_xem_mosaic
+from ..layout import require_confirm_final
 
 from apps.common.confirm import require_confirm
 from apps.common.layout import split_address
 
 async def ask_namespace_registration(
     ctx,
-    common: NEM2TransactionCommon,
+    common: NEM2TransactionCommon | NEM2EmbeddedTransactionCommon,
     namespace_registration: NEM2NamespaceRegistrationTransaction,
     embedded=False
 ):
@@ -63,7 +63,7 @@ async def ask_namespace_registration(
 
 async def ask_address_alias(
     ctx,
-    common: NEM2TransactionCommon,
+    common: NEM2TransactionCommon | NEM2EmbeddedTransactionCommon,
     address_alias: NEM2NamespaceRegistrationTransaction,
     embedded=False
 ):
@@ -99,7 +99,7 @@ async def ask_address_alias(
 
 async def ask_mosaic_alias(
     ctx,
-    common: NEM2TransactionCommon,
+    common: NEM2TransactionCommon | NEM2EmbeddedTransactionCommon,
     mosaic_alias: NEM2NamespaceRegistrationTransaction,
     embedded=False
 ):
@@ -121,11 +121,9 @@ async def ask_mosaic_alias(
         t.normal(mosaic_alias.namespace_id)
         properties.append(t)
     # Alias Action
-    if mosaic_alias.alias_action:
-        if mosaic_alias.alias_action:
-            alias_text = "Link"
-        else:
-            alias_text = "Unlink"
+    if (mosaic_alias.alias_action == NEM2_ALIAS_ACTION_TYPE_LINK or
+        mosaic_alias.alias_action == NEM2_ALIAS_ACTION_TYPE_UNLINK):
+        alias_text = "Link" if mosaic_alias.alias_action else "Unlink"
         t = Text("Confirm properties", ui.ICON_SEND, new_lines=False)
         t.bold("Alias Action:")
         t.br()

@@ -351,6 +351,7 @@ from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2GetPublicKey import NEM2GetPublicKey
 from .NEM2GetPublicKey import NEM2GetPublicKey
+from .NEM2HashLockTransaction import NEM2HashLockTransaction
 from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2Mosaic import NEM2Mosaic
@@ -366,6 +367,8 @@ from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTrans
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2PublicKey import NEM2PublicKey
 from .NEM2PublicKey import NEM2PublicKey
+from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
+from .NEM2SecretProofTransaction import NEM2SecretProofTransaction
 from .NEM2SignTx import NEM2SignTx
 from .NEM2SignTx import NEM2SignTx
 from .NEM2SignedTx import NEM2SignedTx
@@ -574,6 +577,8 @@ from . import NEM2AliasAction
 from . import NEM2AliasAction
 from . import NEM2EntityType
 from . import NEM2EntityType
+from . import NEM2LockHashAlgorithm
+from . import NEM2MosaicSupplyChangeAction
 from . import NEM2NamespaceRegistrationType
 from . import NEM2NamespaceRegistrationType
 from . import NEM2NetworkType
