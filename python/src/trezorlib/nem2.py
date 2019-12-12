@@ -28,6 +28,7 @@ TYPE_AGGREGATE_COMPLETE = 0x4141
 TYPE_NAMESPACE_REGISTRATION = 0x414E
 TYPE_ADDRESS_ALIAS = 0x424E
 TYPE_MOSAIC_ALIAS = 0x434E
+TYPE_HASH_LOCK = 0x4148
 
 NAMESPACE_REGISTRATION_TYPE_ROOT = 0x00
 NAMESPACE_REGISTRATION_TYPE_CHILD = 0x01
@@ -144,6 +145,16 @@ def create_address_alias(transaction):
     msg.alias_action = transaction["aliasAction"]
     return msg
 
+def create_hash_lock(transaction):
+    msg = proto.NEM2HashLockTransaction()
+    msg.mosaic = proto.NEM2Mosaic(
+        id=transaction["mosaic"]["id"],
+        amount=transaction["mosaic"]["amount"],
+    )
+    msg.duration = int(transaction["duration"])
+    msg.hash = transaction["hash"]
+    return msg
+
 def fill_transaction_by_type(msg, transaction):
     if transaction["type"] == TYPE_TRANSACTION_TRANSFER:
         msg.transfer = create_transfer(transaction)
@@ -159,6 +170,8 @@ def fill_transaction_by_type(msg, transaction):
         msg.mosaic_alias = create_mosaic_alias(transaction)
     if transaction["type"] == TYPE_ADDRESS_ALIAS:
         msg.address_alias = create_address_alias(transaction)
+    if transaction["type"] == TYPE_HASH_LOCK:
+        msg.hash_lock = create_hash_lock(transaction)
 
 
 def create_sign_tx(transaction):

@@ -176,6 +176,7 @@ from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2Cosignature import NEM2Cosignature
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2GetPublicKey import NEM2GetPublicKey
+from .NEM2HashLockTransaction import NEM2HashLockTransaction
 from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2Mosaic import NEM2Mosaic
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
