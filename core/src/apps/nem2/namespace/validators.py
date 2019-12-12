@@ -1,8 +1,6 @@
-from trezor.messages.NEM2SignTx import (
-    NEM2SignTx,
-    NEM2TransactionCommon,
-    NEM2TransferTransaction,
-)
+from trezor.messages.NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
+from trezor.messages.NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
+
 from trezor.wire import ProcessError
 
 from ..helpers import (
@@ -42,6 +40,3 @@ def _validate_address_alias(address_alias: NEM2AddressAliasTransaction, version:
 
     if(address_alias.namespace_id is None):
         raise ProcessError("Namespace Id is required")
-
-
-
