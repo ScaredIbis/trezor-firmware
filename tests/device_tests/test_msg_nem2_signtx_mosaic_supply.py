@@ -28,9 +28,7 @@ class TestMsgNEM2SignTxMosaicSupply:
     def test_nem2_signtx_mosaic_supply(self, client):
         tx = nem2.sign_tx(
             client,
-            # TODO: update to use m/44'/43'/0' and re-enable check in core/src/apps/nem2/validators
-            # this will change the sign_tx payload
-            parse_path("m/44'/43'/0'/0'/0'"),
+            parse_path("m/44'/43'/0'"),
             "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
             {
                 "type": nem2.TYPE_MOSAIC_SUPPLY_CHANGE,
@@ -38,7 +36,7 @@ class TestMsgNEM2SignTxMosaicSupply:
                 "version": 38913,
                 "maxFee": "100",
                 "deadline": "113728610090",
-                "mosaicId": "0B65C4B29A80C619",
+                "mosaicId": "4ADB6668071C4969",
                 "action": 1,
                 "delta": "1000000"
             },
@@ -46,9 +44,9 @@ class TestMsgNEM2SignTxMosaicSupply:
 
         assert (
             tx.payload.hex().upper()
-            == "9100000000000000691CB4316D2DC992A7160FF6A1FB4B738C534FC31383A5F368FEAE797DFE335E42194599BF335D33A9A2EE08A6CC711A75F0E9C5C9BB357F5DDDE385921ED50DA8F70E4D5C357273968B12417AE8B742E35E530623C2488D0A73306B412715000000000001984D4264000000000000002ADFC07A1A00000019C6809AB2C4650B40420F000000000001"
+            == "9100000000000000DA04A20F41130A0003F99829042B674840C94331307D833E921244F66AA0096E035B685B4131D8BC9DD515CD0D0F2529A2DFC48FDC61EFE1A38A8B16ED110106252D2E9F95C4671EEB0C67C6666890567E35976B32666263CD390FC188CCF3170000000001984D4264000000000000002ADFC07A1A00000069491C076866DB4A40420F000000000001"
         )
         assert (
             tx.hash.hex().upper()
-            == "EEDDFBCBE0FF235ABB7A5618C42FF61E1FEDAC015BF1009BD6FA27A84CA2340D"
+            == "3103637EAC6D5847E304AC35CC7BCB2881E06C271E370A7B513F221C59F00ADC"
         )
