@@ -6,8 +6,13 @@ from ubinascii import unhexlify, hexlify
 
 from apps.common import seed
 from apps.common.paths import validate_path
-from apps.nem2 import CURVE, transfer, mosaic, namespace, aggregate, hash_lock, secret_lock
-from apps.nem2.helpers import NEM2_HASH_ALG, check_path, NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED, NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE
+from apps.nem2 import CURVE, transfer, mosaic, namespace, metadata, aggregate, hash_lock, secret_lock
+from apps.nem2.helpers import (
+    validate_nem2_path,
+    NEM2_HASH_ALG,
+    NEM2_TRANSACTION_TYPE_AGGREGATE_COMPLETE,
+    NEM2_TRANSACTION_TYPE_AGGREGATE_BONDED
+)
 from apps.nem2.validators import validate
 
 # Included fields are `size`, `verifiableEntityHeader_Reserved1`,
@@ -34,7 +39,7 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
 
     await validate_path(
         ctx,
-        check_path,
+        validate_nem2_path,
         keychain,
         msg.address_n,
         CURVE,
@@ -60,6 +65,8 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         tx = await namespace.namespace_registration(ctx, common, msg.namespace_registration)
     elif msg.address_alias:
         tx = await namespace.address_alias(ctx, common, msg.address_alias)
+    elif msg.namespace_metadata:
+        tx = await metadata.namespace_metadata(ctx, common, msg.namespace_metadata)
     elif msg.mosaic_alias:
         tx = await namespace.mosaic_alias(ctx, common, msg.mosaic_alias)
     elif msg.aggregate:

@@ -7,7 +7,7 @@ from ..helpers import (
     NEM2_NAMESPACE_REGISTRATION_TYPE_ROOT,
     NEM2_NAMESPACE_REGISTRATION_TYPE_SUB,
     NEM2_ALIAS_ACTION_TYPE_LINK,
-    NEM2_ALIAS_ACTION_TYPE_UNLINK,
+    NEM2_ALIAS_ACTION_TYPE_UNLINK
 )
 
 def _validate_namespace_registration(namespace_registration: NEM2NamespaceRegistrationTransaction, version: int):

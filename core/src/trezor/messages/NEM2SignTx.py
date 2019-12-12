@@ -8,6 +8,7 @@ from .NEM2HashLockTransaction import NEM2HashLockTransaction
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
+from .NEM2NamespaceMetadataTransaction import NEM2NamespaceMetadataTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
 from .NEM2SecretProofTransaction import NEM2SecretProofTransaction
@@ -38,6 +39,7 @@ class NEM2SignTx(p.MessageType):
         namespace_registration: NEM2NamespaceRegistrationTransaction = None,
         address_alias: NEM2AddressAliasTransaction = None,
         aggregate: NEM2AggregateTransaction = None,
+        namespace_metadata: NEM2NamespaceMetadataTransaction = None,
         mosaic_alias: NEM2MosaicAliasTransaction = None,
         hash_lock: NEM2HashLockTransaction = None,
         secret_lock: NEM2SecretLockTransaction = None,
@@ -54,6 +56,7 @@ class NEM2SignTx(p.MessageType):
         self.namespace_registration = namespace_registration
         self.address_alias = address_alias
         self.aggregate = aggregate
+        self.namespace_metadata = namespace_metadata
         self.mosaic_alias = mosaic_alias
         self.hash_lock = hash_lock
         self.secret_lock = secret_lock
@@ -73,8 +76,9 @@ class NEM2SignTx(p.MessageType):
             9: ('namespace_registration', NEM2NamespaceRegistrationTransaction, 0),
             10: ('address_alias', NEM2AddressAliasTransaction, 0),
             11: ('aggregate', NEM2AggregateTransaction, 0),
-            12: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
-            13: ('hash_lock', NEM2HashLockTransaction, 0),
-            14: ('secret_lock', NEM2SecretLockTransaction, 0),
-            15: ('secret_proof', NEM2SecretProofTransaction, 0),
+            12: ('namespace_metadata', NEM2NamespaceMetadataTransaction, 0),
+            13: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
+            14: ('hash_lock', NEM2HashLockTransaction, 0),
+            15: ('secret_lock', NEM2SecretLockTransaction, 0),
+            16: ('secret_proof', NEM2SecretProofTransaction, 0),
         }

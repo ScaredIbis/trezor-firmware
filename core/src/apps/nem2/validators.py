@@ -7,6 +7,7 @@ from trezor.messages.NEM2SignTx import (
 from trezor.wire import ProcessError
 
 from .helpers import (
+    validate_nem2_path,
     NEM2_MAX_DIVISIBILITY,
     NEM2_MAX_ENCRYPTED_PAYLOAD_SIZE,
     NEM2_MAX_PLAIN_PAYLOAD_SIZE,
@@ -31,6 +32,9 @@ from .namespace.validators import (
 )
 
 def validate(msg: NEM2SignTx):
+    if not validate_nem2_path(msg.address_n):
+        raise ProcessError("Invalid HD path provided, must fit 'm/44\'/43\'/a'")
+
     if msg.transaction is None:
         raise ProcessError("No common transaction fields provided")
 
@@ -70,6 +74,7 @@ def _validate_single_tx(msg: NEM2SignTx):
         + bool(msg.mosaic_definition)
         + bool(msg.mosaic_supply)
         + bool(msg.address_alias)
+        + bool(msg.namespace_metadata)
         + bool(msg.mosaic_alias)
         + bool(msg.aggregate)
         + bool(msg.hash_lock)
@@ -136,14 +141,14 @@ def _validate_mosaic_supply(mosaic_supply: NEM2MosaicSupplyChangeTransaction):
     if mosaic_supply.mosaic_id is None:
         raise ProcessError("No mosaic ID provided")
     if mosaic_supply.action is None:
-        raise ProcessError("No action provided")    
+        raise ProcessError("No action provided")
     if mosaic_supply.delta is None:
         raise ProcessError("No delta provided")
 
     # Action was provided, now check it is valid
     valid_actions = [NEM2_MOSAIC_SUPPLY_CHANGE_ACTION_INCREASE, NEM2_MOSAIC_SUPPLY_CHANGE_ACTION_DECREASE]
     if mosaic_supply.action not in valid_actions:
-        raise ProcessError("Invalid action provided")   
+        raise ProcessError("Invalid action provided")
 
 
 def _validate_mosaic_alias(mosaic_alias: NEM2MosaicAliasTransaction, network: int):
