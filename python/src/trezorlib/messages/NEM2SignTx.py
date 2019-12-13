@@ -2,6 +2,7 @@
 # fmt: off
 from .. import protobuf as p
 
+from .NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2HashLockTransaction import NEM2HashLockTransaction
@@ -42,6 +43,7 @@ class NEM2SignTx(p.MessageType):
         aggregate: NEM2AggregateTransaction = None,
         namespace_metadata: NEM2NamespaceMetadataTransaction = None,
         mosaic_metadata: NEM2MosaicMetadataTransaction = None,
+        account_metadata: NEM2AccountMetadataTransaction = None,
         mosaic_alias: NEM2MosaicAliasTransaction = None,
         hash_lock: NEM2HashLockTransaction = None,
         secret_lock: NEM2SecretLockTransaction = None,
@@ -60,6 +62,7 @@ class NEM2SignTx(p.MessageType):
         self.aggregate = aggregate
         self.namespace_metadata = namespace_metadata
         self.mosaic_metadata = mosaic_metadata
+        self.account_metadata = account_metadata
         self.mosaic_alias = mosaic_alias
         self.hash_lock = hash_lock
         self.secret_lock = secret_lock
@@ -81,8 +84,9 @@ class NEM2SignTx(p.MessageType):
             11: ('aggregate', NEM2AggregateTransaction, 0),
             12: ('namespace_metadata', NEM2NamespaceMetadataTransaction, 0),
             13: ('mosaic_metadata', NEM2MosaicMetadataTransaction, 0),
-            14: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
-            15: ('hash_lock', NEM2HashLockTransaction, 0),
-            16: ('secret_lock', NEM2SecretLockTransaction, 0),
-            17: ('secret_proof', NEM2SecretProofTransaction, 0),
+            14: ('account_metadata', NEM2AccountMetadataTransaction, 0),
+            15: ('mosaic_alias', NEM2MosaicAliasTransaction, 0),
+            16: ('hash_lock', NEM2HashLockTransaction, 0),
+            17: ('secret_lock', NEM2SecretLockTransaction, 0),
+            18: ('secret_proof', NEM2SecretProofTransaction, 0),
         }
