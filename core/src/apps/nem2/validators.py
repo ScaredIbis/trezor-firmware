@@ -31,6 +31,8 @@ from .namespace.validators import (
     _validate_address_alias
 )
 
+from .metadata.validators import _validate_metadata
+
 def validate(msg: NEM2SignTx):
     if not validate_nem2_path(msg.address_n):
         raise ProcessError("Invalid HD path provided, must fit 'm/44\'/43\'/a'")
@@ -53,12 +55,16 @@ def validate(msg: NEM2SignTx):
         _validate_mosaic_definition(msg.mosaic_definition)
     if msg.mosaic_supply:
         _validate_mosaic_supply(msg.mosaic_supply)
-    if(msg.namespace_registration):
+    if msg.namespace_registration:
         _validate_namespace_registration(msg.namespace_registration, msg.transaction.version)
-    if(msg.address_alias):
+    if msg.address_alias:
         _validate_address_alias(msg.address_alias, msg.transaction.version)
     if msg.mosaic_alias:
         _validate_mosaic_alias(msg.mosaic_alias, msg.transaction.version)
+    if msg.namespace_metadata:
+        _validate_metadata(msg.namespace_metadata, msg.transaction.type)
+    if msg.mosaic_metadata:
+        _validate_metadata(msg.mosaic_metadata, msg.transaction.type)
     if msg.hash_lock:
         _validate_hash_lock(msg.hash_lock)
     if msg.secret_lock:
@@ -75,6 +81,7 @@ def _validate_single_tx(msg: NEM2SignTx):
         + bool(msg.mosaic_supply)
         + bool(msg.address_alias)
         + bool(msg.namespace_metadata)
+        + bool(msg.mosaic_metadata)
         + bool(msg.mosaic_alias)
         + bool(msg.aggregate)
         + bool(msg.hash_lock)
