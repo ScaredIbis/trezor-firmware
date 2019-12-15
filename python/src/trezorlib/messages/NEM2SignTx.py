@@ -10,6 +10,7 @@ from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
+from .NEM2MultisigModificationTransaction import NEM2MultisigModificationTransaction
 from .NEM2NamespaceMetadataTransaction import NEM2NamespaceMetadataTransaction
 from .NEM2NamespaceRegistrationTransaction import NEM2NamespaceRegistrationTransaction
 from .NEM2SecretLockTransaction import NEM2SecretLockTransaction
@@ -48,6 +49,7 @@ class NEM2SignTx(p.MessageType):
         hash_lock: NEM2HashLockTransaction = None,
         secret_lock: NEM2SecretLockTransaction = None,
         secret_proof: NEM2SecretProofTransaction = None,
+        multisig_modification: NEM2MultisigModificationTransaction = None,
     ) -> None:
         self.transaction = transaction
         self.multisig = multisig
@@ -67,6 +69,7 @@ class NEM2SignTx(p.MessageType):
         self.hash_lock = hash_lock
         self.secret_lock = secret_lock
         self.secret_proof = secret_proof
+        self.multisig_modification = multisig_modification
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -89,4 +92,5 @@ class NEM2SignTx(p.MessageType):
             16: ('hash_lock', NEM2HashLockTransaction, 0),
             17: ('secret_lock', NEM2SecretLockTransaction, 0),
             18: ('secret_proof', NEM2SecretProofTransaction, 0),
+            19: ('multisig_modification', NEM2MultisigModificationTransaction, 0),
         }

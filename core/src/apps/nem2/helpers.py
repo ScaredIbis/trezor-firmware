@@ -21,6 +21,7 @@ NEM2_TRANSACTION_TYPE_MOSAIC_ALIAS = const(0x434E)
 NEM2_TRANSACTION_TYPE_HASH_LOCK = const(0x4148)
 NEM2_TRANSACTION_TYPE_SECRET_LOCK = const(0x4152)
 NEM2_TRANSACTION_TYPE_SECRET_PROOF = const(0x4252)
+NEM2_TRANSACTION_TYPE_MULTISIG_MODIFICATION = const(0x4155)
 
 NEM2_NAMESPACE_REGISTRATION_TYPE_ROOT = const(0x00)
 NEM2_NAMESPACE_REGISTRATION_TYPE_SUB = const(0x01)
@@ -67,3 +68,13 @@ def captialize_string(s):
     s = list(s)
     s[0] = s[0].upper()
     return "".join(s)
+
+# the smallest protobuf integer size is 32 bits
+# nem2 catapult uses a signed 8 bit integer for minApprovalDelta and minRemovalDelta
+# this function is used to convert between the signed 8 bit integers sent by the sdk
+# to the uint32 data type as defined in the protobuf message
+def unsigned_32_bit_int_to_8_bit(unsigned_32_bit_int, signed=False):
+    unsigned_8_bit_int = unsigned_32_bit_int & 0x000000ff
+    if(signed and unsigned_8_bit_int > 127):
+        return unsigned_8_bit_int - 256
+    return unsigned_8_bit_int
