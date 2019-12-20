@@ -1,9 +1,9 @@
 [
     {
       "name": "NEM",
-      "ticker": "XEM",
-      "namespace": "nem",
-      "mosaic": "xem",
+      "ticker": "CAT",
+      "namespace": "cat.currency",
+      "mosaic": "cat.currency",
       "divisibility": 6,
       "links": {
         "Homepage": "https://nem.io"
