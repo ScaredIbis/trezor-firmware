@@ -340,9 +340,12 @@ from .MoneroWatchKey import MoneroWatchKey
 from .MultisigRedeemScriptType import MultisigRedeemScriptType
 from .MultisigRedeemScriptType import MultisigRedeemScriptType
 from .NEM2AccountAddressRestrictionTransaction import NEM2AccountAddressRestrictionTransaction
+from .NEM2AccountAddressRestrictionTransaction import NEM2AccountAddressRestrictionTransaction
 from .NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 from .NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 from .NEM2AccountMosaicRestrictionTransaction import NEM2AccountMosaicRestrictionTransaction
+from .NEM2AccountMosaicRestrictionTransaction import NEM2AccountMosaicRestrictionTransaction
+from .NEM2AccountOperationRestrictionTransaction import NEM2AccountOperationRestrictionTransaction
 from .NEM2AccountOperationRestrictionTransaction import NEM2AccountOperationRestrictionTransaction
 from .NEM2Address import NEM2Address
 from .NEM2Address import NEM2Address
@@ -352,6 +355,7 @@ from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2Cosignature import NEM2Cosignature
 from .NEM2Cosignature import NEM2Cosignature
+from .NEM2CosignatureSignedTx import NEM2CosignatureSignedTx
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2GetPublicKey import NEM2GetPublicKey
@@ -370,6 +374,7 @@ from .NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
 from .NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
+from .NEM2MultisigModificationTransaction import NEM2MultisigModificationTransaction
 from .NEM2MultisigModificationTransaction import NEM2MultisigModificationTransaction
 from .NEM2NamespaceMetadataTransaction import NEM2NamespaceMetadataTransaction
 from .NEM2NamespaceMetadataTransaction import NEM2NamespaceMetadataTransaction
@@ -585,6 +590,7 @@ from . import LiskTransactionType
 from . import LiskTransactionType
 from . import MessageType
 from . import MessageType
+from . import NEM2AccountRestrictionFlags
 from . import NEM2AccountRestrictionFlags
 from . import NEM2AliasAction
 from . import NEM2AliasAction
