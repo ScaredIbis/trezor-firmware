@@ -60,7 +60,10 @@ from .CardanoTxOutputType import CardanoTxOutputType
 from .CardanoTxRequest import CardanoTxRequest
 from .CardanoTxRequest import CardanoTxRequest
 from .ChangePin import ChangePin
+from .ChangePin import ChangePin
 from .ChangeWipeCode import ChangeWipeCode
+from .ChangeWipeCode import ChangeWipeCode
+from .CipherKeyValue import CipherKeyValue
 from .CipherKeyValue import CipherKeyValue
 from .CipheredKeyValue import CipheredKeyValue
 from .CipheredKeyValue import CipheredKeyValue
@@ -80,6 +83,7 @@ from .DebugLinkFlashErase import DebugLinkFlashErase
 from .DebugLinkFlashErase import DebugLinkFlashErase
 from .DebugLinkGetState import DebugLinkGetState
 from .DebugLinkGetState import DebugLinkGetState
+from .DebugLinkLayout import DebugLinkLayout
 from .DebugLinkLayout import DebugLinkLayout
 from .DebugLinkLog import DebugLinkLog
 from .DebugLinkLog import DebugLinkLog
@@ -199,6 +203,7 @@ from .GetEntropy import GetEntropy
 from .GetEntropy import GetEntropy
 from .GetFeatures import GetFeatures
 from .GetFeatures import GetFeatures
+from .GetNextU2FCounter import GetNextU2FCounter
 from .GetNextU2FCounter import GetNextU2FCounter
 from .GetPublicKey import GetPublicKey
 from .GetPublicKey import GetPublicKey
@@ -357,6 +362,7 @@ from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2Cosignature import NEM2Cosignature
 from .NEM2Cosignature import NEM2Cosignature
 from .NEM2CosignatureSignedTx import NEM2CosignatureSignedTx
+from .NEM2CosignatureSignedTx import NEM2CosignatureSignedTx
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2GetPublicKey import NEM2GetPublicKey
@@ -428,7 +434,10 @@ from .NEMSignedTx import NEMSignedTx
 from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransfer import NEMTransfer
+from .NEMTransfer import NEMTransfer
 from .NextU2FCounter import NextU2FCounter
+from .NextU2FCounter import NextU2FCounter
+from .PassphraseAck import PassphraseAck
 from .PassphraseAck import PassphraseAck
 from .PassphraseRequest import PassphraseRequest
 from .PassphraseRequest import PassphraseRequest
@@ -519,9 +528,14 @@ from .TezosDelegationOp import TezosDelegationOp
 from .TezosGetAddress import TezosGetAddress
 from .TezosGetAddress import TezosGetAddress
 from .TezosGetPublicKey import TezosGetPublicKey
+from .TezosGetPublicKey import TezosGetPublicKey
+from .TezosManagerTransfer import TezosManagerTransfer
 from .TezosManagerTransfer import TezosManagerTransfer
 from .TezosOriginationOp import TezosOriginationOp
+from .TezosOriginationOp import TezosOriginationOp
 from .TezosParametersManager import TezosParametersManager
+from .TezosParametersManager import TezosParametersManager
+from .TezosProposalOp import TezosProposalOp
 from .TezosProposalOp import TezosProposalOp
 from .TezosPublicKey import TezosPublicKey
 from .TezosPublicKey import TezosPublicKey
