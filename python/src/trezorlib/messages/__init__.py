@@ -60,8 +60,7 @@ from .CardanoTxOutputType import CardanoTxOutputType
 from .CardanoTxRequest import CardanoTxRequest
 from .CardanoTxRequest import CardanoTxRequest
 from .ChangePin import ChangePin
-from .ChangePin import ChangePin
-from .CipherKeyValue import CipherKeyValue
+from .ChangeWipeCode import ChangeWipeCode
 from .CipherKeyValue import CipherKeyValue
 from .CipheredKeyValue import CipheredKeyValue
 from .CipheredKeyValue import CipheredKeyValue
@@ -81,6 +80,7 @@ from .DebugLinkFlashErase import DebugLinkFlashErase
 from .DebugLinkFlashErase import DebugLinkFlashErase
 from .DebugLinkGetState import DebugLinkGetState
 from .DebugLinkGetState import DebugLinkGetState
+from .DebugLinkLayout import DebugLinkLayout
 from .DebugLinkLog import DebugLinkLog
 from .DebugLinkLog import DebugLinkLog
 from .DebugLinkMemory import DebugLinkMemory
@@ -199,6 +199,7 @@ from .GetEntropy import GetEntropy
 from .GetEntropy import GetEntropy
 from .GetFeatures import GetFeatures
 from .GetFeatures import GetFeatures
+from .GetNextU2FCounter import GetNextU2FCounter
 from .GetPublicKey import GetPublicKey
 from .GetPublicKey import GetPublicKey
 from .HDNodePathType import HDNodePathType
@@ -427,8 +428,7 @@ from .NEMSignedTx import NEMSignedTx
 from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransfer import NEMTransfer
-from .NEMTransfer import NEMTransfer
-from .PassphraseAck import PassphraseAck
+from .NextU2FCounter import NextU2FCounter
 from .PassphraseAck import PassphraseAck
 from .PassphraseRequest import PassphraseRequest
 from .PassphraseRequest import PassphraseRequest
@@ -519,10 +519,9 @@ from .TezosDelegationOp import TezosDelegationOp
 from .TezosGetAddress import TezosGetAddress
 from .TezosGetAddress import TezosGetAddress
 from .TezosGetPublicKey import TezosGetPublicKey
-from .TezosGetPublicKey import TezosGetPublicKey
+from .TezosManagerTransfer import TezosManagerTransfer
 from .TezosOriginationOp import TezosOriginationOp
-from .TezosOriginationOp import TezosOriginationOp
-from .TezosProposalOp import TezosProposalOp
+from .TezosParametersManager import TezosParametersManager
 from .TezosProposalOp import TezosProposalOp
 from .TezosPublicKey import TezosPublicKey
 from .TezosPublicKey import TezosPublicKey
