@@ -1,15 +1,14 @@
 from trezor.messages.NEM2TransactionCommon import NEM2TransactionCommon
 from trezor.messages.NEM2NamespaceMetadataTransaction import NEM2NamespaceMetadataTransaction
+from trezor.messages.NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
+from trezor.messages.NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 
 from . import layout, serialize
 
-async def namespace_metadata(
+async def metadata(
     ctx,
     common: NEM2TransactionCommon,
-    namespace_metadata: NEM2NamespaceMetadataTransaction
+    metadata: NEM2NamespaceMetadataTransaction | NEM2MosaicMetadataTransaction | NEM2AccountMetadataTransaction
 ):
-
-    await layout.ask_namespace_metadata(ctx, common, namespace_metadata)
-
-    return serialize.serialize_namespace_metadata(common, namespace_metadata)
-
+    await layout.ask_metadata(ctx, common, metadata)
+    return serialize.serialize_metadata(common, metadata)
