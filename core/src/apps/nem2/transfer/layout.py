@@ -79,20 +79,6 @@ def _get_xem_amount(transfer: NEM2TransferTransaction):
     # if there are mosaics but do not include xem, 0 xem is sent
     return 0
 
-async def ask_importance_transfer(
-    ctx,
-    common: NEM2TransactionCommon | NEM2EmbeddedTransactionCommon,
-    imp: NEMImportanceTransfer
-):
-    if imp.mode == NEMImportanceTransferMode.ImportanceTransfer_Activate:
-        m = "Activate"
-    else:
-        m = "Deactivate"
-    await require_confirm_text(ctx, m + " remote harvesting?")
-    if not embedded:
-        await require_confirm_final(ctx, common.fee)
-
-
 async def _require_confirm_transfer(ctx, recipient, value):
     text = Text("Confirm transfer", ui.ICON_SEND, ui.GREEN)
     text.bold("Send %s XEM" % format_amount(value, NEM2_MAX_DIVISIBILITY))
