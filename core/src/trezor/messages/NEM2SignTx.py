@@ -3,14 +3,17 @@
 import protobuf as p
 
 from .NEM2AccountAddressRestrictionTransaction import NEM2AccountAddressRestrictionTransaction
+from .NEM2AccountLinkTransaction import NEM2AccountLinkTransaction
 from .NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 from .NEM2AccountMosaicRestrictionTransaction import NEM2AccountMosaicRestrictionTransaction
 from .NEM2AccountOperationRestrictionTransaction import NEM2AccountOperationRestrictionTransaction
 from .NEM2AddressAliasTransaction import NEM2AddressAliasTransaction
 from .NEM2AggregateTransaction import NEM2AggregateTransaction
 from .NEM2HashLockTransaction import NEM2HashLockTransaction
+from .NEM2MosaicAddressRestrictionTransaction import NEM2MosaicAddressRestrictionTransaction
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
+from .NEM2MosaicGlobalRestrictionTransaction import NEM2MosaicGlobalRestrictionTransaction
 from .NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
 from .NEM2MultisigModificationTransaction import NEM2MultisigModificationTransaction
@@ -23,10 +26,10 @@ from .NEM2TransferTransaction import NEM2TransferTransaction
 
 if __debug__:
     try:
-        from typing import Dict, List, Optional
+        from typing import Dict, List  # noqa: F401
         from typing_extensions import Literal  # noqa: F401
     except ImportError:
-        Dict, List, Optional = None, None, None  # type: ignore
+        pass
 
 
 class NEM2SignTx(p.MessageType):
@@ -56,6 +59,9 @@ class NEM2SignTx(p.MessageType):
         account_address_restriction: NEM2AccountAddressRestrictionTransaction = None,
         account_mosaic_restriction: NEM2AccountMosaicRestrictionTransaction = None,
         account_operation_restriction: NEM2AccountOperationRestrictionTransaction = None,
+        account_link: NEM2AccountLinkTransaction = None,
+        mosaic_global_restriction: NEM2MosaicGlobalRestrictionTransaction = None,
+        mosaic_address_restriction: NEM2MosaicAddressRestrictionTransaction = None,
     ) -> None:
         self.transaction = transaction
         self.multisig = multisig
@@ -79,6 +85,9 @@ class NEM2SignTx(p.MessageType):
         self.account_address_restriction = account_address_restriction
         self.account_mosaic_restriction = account_mosaic_restriction
         self.account_operation_restriction = account_operation_restriction
+        self.account_link = account_link
+        self.mosaic_global_restriction = mosaic_global_restriction
+        self.mosaic_address_restriction = mosaic_address_restriction
 
     @classmethod
     def get_fields(cls) -> Dict:
@@ -105,4 +114,7 @@ class NEM2SignTx(p.MessageType):
             21: ('account_address_restriction', NEM2AccountAddressRestrictionTransaction, 0),
             22: ('account_mosaic_restriction', NEM2AccountMosaicRestrictionTransaction, 0),
             23: ('account_operation_restriction', NEM2AccountOperationRestrictionTransaction, 0),
+            24: ('account_link', NEM2AccountLinkTransaction, 0),
+            25: ('mosaic_global_restriction', NEM2MosaicGlobalRestrictionTransaction, 0),
+            26: ('mosaic_address_restriction', NEM2MosaicAddressRestrictionTransaction, 0),
         }

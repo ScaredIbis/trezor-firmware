@@ -17,7 +17,9 @@ from apps.nem2 import (
     hash_lock,
     secret_lock,
     multisig,
-    account_restriction
+    account_restriction,
+    account_link,
+    mosaic_restriction
 )
 from apps.nem2.helpers import (
     validate_nem2_path,
@@ -30,7 +32,7 @@ from apps.nem2.validators import validate
 # Included fields are `size`, `verifiableEntityHeader_Reserved1`,
 # `signature`, `signerPublicKey` and `entityBody_Reserved1`.
 def get_transaction_header_size():
-    return 8 + 64 + 32 + 4
+    return 4 + 4 + 64 + 32 + 4
 
 # Included fields are the transaction header, `version`,
 # `network`, `type`, `maxFee` and `deadline`
@@ -107,20 +109,12 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
         tx = await account_restriction.account_restriction(ctx, common, msg.account_mosaic_restriction)
     elif msg.account_operation_restriction:
         tx = await account_restriction.account_restriction(ctx, common, msg.account_operation_restriction)
-    # elif msg.supply_change:
-    #     tx = await mosaic.supply_change(ctx, public_key, common, msg.supply_change)
-    # elif msg.aggregate_modification:
-    #     tx = await multisig.aggregate_modification(
-    #         ctx,
-    #         public_key,
-    #         common,
-    #         msg.aggregate_modification,
-    #         msg.multisig is not None,
-    #     )
-    # elif msg.importance_transfer:
-    #     tx = await transfer.importance_transfer(
-    #         ctx, public_key, common, msg.importance_transfer
-    #     )
+    elif msg.account_link:
+        tx = await account_link.account_link(ctx, common, msg.account_link)
+    elif msg.mosaic_global_restriction:
+        tx = await mosaic_restriction.global_restriction(ctx, common, msg.mosaic_global_restriction)
+    elif msg.mosaic_address_restriction:
+        tx = await mosaic_restriction.address_restriction(ctx, common, msg.mosaic_address_restriction)
     else:
         raise ValueError("No transaction provided")
 
@@ -166,4 +160,5 @@ async def sign_tx(ctx, msg: NEM2SignTx, keychain):
     resp = NEM2SignedTx()
     resp.payload = payload
     resp.hash = sha3_256(hash_bytes).digest()
+    resp.signature = signature
     return resp

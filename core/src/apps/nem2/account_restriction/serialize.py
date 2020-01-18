@@ -36,7 +36,7 @@ def serialize_account_restriction(
     entity_type = common.type
 
     # Total size is the size of the common transaction properties
-    # + the secret lock transaction specific properties
+    # + the account restriction body properties
     size = get_common_message_size() if not embedded else get_embedded_common_message_size()
     size += get_account_restriction_body_size(account_restriction, entity_type)
 
@@ -80,7 +80,7 @@ def get_account_restriction_body_size(
         if entity_type == NEM2_TRANSACTION_TYPE_ACCOUNT_ADDRESS_RESTRICTION:
             size += 25 # recipient is 25 bytes
         elif entity_type == NEM2_TRANSACTION_TYPE_ACCOUNT_MOSAIC_RESTRICTION:
-            size += 8 # mosaic ID is 25 bytes
+            size += 8 # mosaic ID is 8 bytes
         elif entity_type == NEM2_TRANSACTION_TYPE_ACCOUNT_OPERATION_RESTRICTION:
             size += 2 # entity type is 2 bytes
 

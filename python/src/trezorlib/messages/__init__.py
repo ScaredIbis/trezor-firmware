@@ -61,6 +61,8 @@ from .CardanoTxRequest import CardanoTxRequest
 from .CardanoTxRequest import CardanoTxRequest
 from .ChangePin import ChangePin
 from .ChangePin import ChangePin
+from .ChangeWipeCode import ChangeWipeCode
+from .ChangeWipeCode import ChangeWipeCode
 from .CipherKeyValue import CipherKeyValue
 from .CipherKeyValue import CipherKeyValue
 from .CipheredKeyValue import CipheredKeyValue
@@ -81,6 +83,8 @@ from .DebugLinkFlashErase import DebugLinkFlashErase
 from .DebugLinkFlashErase import DebugLinkFlashErase
 from .DebugLinkGetState import DebugLinkGetState
 from .DebugLinkGetState import DebugLinkGetState
+from .DebugLinkLayout import DebugLinkLayout
+from .DebugLinkLayout import DebugLinkLayout
 from .DebugLinkLog import DebugLinkLog
 from .DebugLinkLog import DebugLinkLog
 from .DebugLinkMemory import DebugLinkMemory
@@ -199,6 +203,8 @@ from .GetEntropy import GetEntropy
 from .GetEntropy import GetEntropy
 from .GetFeatures import GetFeatures
 from .GetFeatures import GetFeatures
+from .GetNextU2FCounter import GetNextU2FCounter
+from .GetNextU2FCounter import GetNextU2FCounter
 from .GetPublicKey import GetPublicKey
 from .GetPublicKey import GetPublicKey
 from .HDNodePathType import HDNodePathType
@@ -341,6 +347,8 @@ from .MultisigRedeemScriptType import MultisigRedeemScriptType
 from .MultisigRedeemScriptType import MultisigRedeemScriptType
 from .NEM2AccountAddressRestrictionTransaction import NEM2AccountAddressRestrictionTransaction
 from .NEM2AccountAddressRestrictionTransaction import NEM2AccountAddressRestrictionTransaction
+from .NEM2AccountLinkTransaction import NEM2AccountLinkTransaction
+from .NEM2AccountLinkTransaction import NEM2AccountLinkTransaction
 from .NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 from .NEM2AccountMetadataTransaction import NEM2AccountMetadataTransaction
 from .NEM2AccountMosaicRestrictionTransaction import NEM2AccountMosaicRestrictionTransaction
@@ -358,14 +366,10 @@ from .NEM2Cosignature import NEM2Cosignature
 from .NEM2CosignatureSignedTx import NEM2CosignatureSignedTx
 from .NEM2CosignatureSignedTx import NEM2CosignatureSignedTx
 from .NEM2DecryptMessage import NEM2DecryptMessage
-from .NEM2DecryptMessage import NEM2DecryptMessage
-from .NEM2DecryptedMessage import NEM2DecryptedMessage
 from .NEM2DecryptedMessage import NEM2DecryptedMessage
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2EmbeddedTransactionCommon import NEM2EmbeddedTransactionCommon
 from .NEM2EncryptMessage import NEM2EncryptMessage
-from .NEM2EncryptMessage import NEM2EncryptMessage
-from .NEM2EncryptedMessage import NEM2EncryptedMessage
 from .NEM2EncryptedMessage import NEM2EncryptedMessage
 from .NEM2GetPublicKey import NEM2GetPublicKey
 from .NEM2GetPublicKey import NEM2GetPublicKey
@@ -375,10 +379,14 @@ from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2InnerTransaction import NEM2InnerTransaction
 from .NEM2Mosaic import NEM2Mosaic
 from .NEM2Mosaic import NEM2Mosaic
+from .NEM2MosaicAddressRestrictionTransaction import NEM2MosaicAddressRestrictionTransaction
+from .NEM2MosaicAddressRestrictionTransaction import NEM2MosaicAddressRestrictionTransaction
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicAliasTransaction import NEM2MosaicAliasTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
 from .NEM2MosaicDefinitionTransaction import NEM2MosaicDefinitionTransaction
+from .NEM2MosaicGlobalRestrictionTransaction import NEM2MosaicGlobalRestrictionTransaction
+from .NEM2MosaicGlobalRestrictionTransaction import NEM2MosaicGlobalRestrictionTransaction
 from .NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
 from .NEM2MosaicMetadataTransaction import NEM2MosaicMetadataTransaction
 from .NEM2MosaicSupplyChangeTransaction import NEM2MosaicSupplyChangeTransaction
@@ -437,6 +445,8 @@ from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransactionCommon import NEMTransactionCommon
 from .NEMTransfer import NEMTransfer
 from .NEMTransfer import NEMTransfer
+from .NextU2FCounter import NextU2FCounter
+from .NextU2FCounter import NextU2FCounter
 from .PassphraseAck import PassphraseAck
 from .PassphraseAck import PassphraseAck
 from .PassphraseRequest import PassphraseRequest
@@ -529,8 +539,12 @@ from .TezosGetAddress import TezosGetAddress
 from .TezosGetAddress import TezosGetAddress
 from .TezosGetPublicKey import TezosGetPublicKey
 from .TezosGetPublicKey import TezosGetPublicKey
+from .TezosManagerTransfer import TezosManagerTransfer
+from .TezosManagerTransfer import TezosManagerTransfer
 from .TezosOriginationOp import TezosOriginationOp
 from .TezosOriginationOp import TezosOriginationOp
+from .TezosParametersManager import TezosParametersManager
+from .TezosParametersManager import TezosParametersManager
 from .TezosProposalOp import TezosProposalOp
 from .TezosProposalOp import TezosProposalOp
 from .TezosPublicKey import TezosPublicKey
