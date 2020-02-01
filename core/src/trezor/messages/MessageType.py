@@ -197,3 +197,7 @@ if not utils.BITCOIN_ONLY:
     NEM2SignTx = 806  # type: Literal[806]
     NEM2SignedTx = 807  # type: Literal[807]
     NEM2CosignatureSignedTx = 808  # type: Literal[808]
+    NEM2EncryptMessage = 809  # type: Literal[809]
+    NEM2EncryptedMessage = 810  # type: Literal[810]
+    NEM2DecryptMessage = 811  # type: Literal[811]
+    NEM2DecryptedMessage = 812  # type: Literal[812]
