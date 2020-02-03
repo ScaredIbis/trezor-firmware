@@ -1,0 +1,478 @@
+syntax = "proto2";
+package hw.trezor.messages.nem2;
+
+// Sugar for easier handling in Java
+option java_package = "com.satoshilabs.trezor.lib.protobuf";
+option java_outer_classname = "TrezorMessageNem2";
+
+// The messages defined here reflect the schemas defined in the catbuffer project
+// https://github.com/nemtech/catbuffer/tree/master/schemas
+
+/**
+ * Request: Ask device to encrypt an arbitrary string using AES
+ * @start
+ * @next NEM2EncryptedMessage
+ * @next Failure
+ */
+message NEM2EncryptMessage {
+    repeated uint32 address_n = 1; // BIP-32 path to derive the key from master node
+    optional string recipient_public_key = 2; // Public key of message recipient
+    optional string payload = 3;
+}
+
+message NEM2EncryptedMessage {
+    optional bytes payload = 1;
+}
+
+/**
+ * Request: Ask device to decrypt an AES encrypted payload
+ * @start
+ * @next NEM2DecryptedMessage
+ * @next Failure
+ */
+message NEM2DecryptMessage {
+    repeated uint32 address_n = 1; // BIP-32 path to derive the key from master node
+    optional string sender_public_key = 2; // Public key of message encrypter
+    optional string payload = 3;
+}
+
+message NEM2DecryptedMessage {
+    optional bytes payload = 1;
+}
+
+/**
+ * Request: Ask device for NEM2 public key corresponding to address_n path
+ * @start
+ * @next NEM2PublicKey
+ * @next Failure
+ */
+message NEM2GetPublicKey {
+    repeated uint32 address_n = 1;      // BIP-32 path to derive the key from master node
+    optional bool show_display = 2;     // Optionally show on display before sending the result
+}
+
+/**
+ * Response: Contains NEM2 address derived from device private seed
+ * @endTimestamp
+ */
+message NEM2PublicKey {
+    required bytes public_key = 1;    // NEM public key in Base32 encoding
+}
+
+/**
+ * Request: Ask device to sign transaction
+ * @start
+ * @next NEM2SignedTx
+ * @next Failure
+ */
+message NEM2SignTx {
+    optional NEM2TransactionCommon transaction = 1;    // Common part of transaction
+    optional NEM2TransactionCommon multisig = 2;       // Common part of inner transaction for multisig transactions
+    optional NEM2TransferTransaction transfer = 3;          // Transfer transaction part
+    optional string generation_hash = 4;
+    repeated uint32 address_n = 5;
+    optional string cosigning = 6;
+    optional NEM2MosaicDefinitionTransaction mosaic_definition = 7; // Mosaic Definition part
+    optional NEM2MosaicSupplyChangeTransaction mosaic_supply = 8; // Mosaic Supply part
+    optional NEM2NamespaceRegistrationTransaction namespace_registration = 9; // Namespace registration part
+    optional NEM2AddressAliasTransaction address_alias = 10; // Address Alias
+    optional NEM2AggregateTransaction aggregate = 11; // Aggregate part
+    optional NEM2NamespaceMetadataTransaction namespace_metadata = 12; // Namespace metadata part
+    optional NEM2MosaicMetadataTransaction mosaic_metadata = 13; // Mosaic metadata part
+    optional NEM2AccountMetadataTransaction account_metadata = 14; // Account metadata part
+    optional NEM2MosaicAliasTransaction mosaic_alias = 15; // Mosaic Alias part
+    optional NEM2HashLockTransaction hash_lock = 16; // Hash Lock part
+    optional NEM2SecretLockTransaction secret_lock = 17; // Secret Lock part
+    optional NEM2SecretProofTransaction secret_proof = 18; // Secret Proof part
+    optional NEM2MultisigModificationTransaction multisig_modification = 19; // Multisig modification part
+    optional NEM2AccountAddressRestrictionTransaction account_address_restriction = 21; // Account address restriction part
+    optional NEM2AccountMosaicRestrictionTransaction account_mosaic_restriction = 22; // Account mosaic restriction part
+    optional NEM2AccountOperationRestrictionTransaction account_operation_restriction = 23; // Account operation restriction part
+    optional NEM2AccountLinkTransaction account_link = 24; // Account link part
+    optional NEM2MosaicGlobalRestrictionTransaction mosaic_global_restriction = 25; // Mosaic Global Restriction
+    optional NEM2MosaicAddressRestrictionTransaction mosaic_address_restriction = 26; // Mosaic Address Restriction
+
+    /**
+    * Common types from
+    * https://github.com/nemtech/catbuffer/blob/master/schemas/types.cats
+    */
+
+    message NEM2Mosaic {
+        optional string id = 1;
+        optional string amount = 2;
+    }
+
+    /**
+    * Entities reflect definitions from
+    * https://github.com/nemtech/catbuffer/blob/master/schemas/entity.cats
+    */
+    enum NEM2EntityType {
+        RESERVED = 0;
+        TRANSFER = 16724;
+        MOSAIC_DEFINITION = 16717;
+        MOSAIC_SUPPLY_CHANGE = 16973;
+        NAMESPACE_REGISTRATION = 16718;
+        ADDRESS_ALIAS = 16974;
+        AGGREGATE_BONDED = 16961;
+        AGGREGATE_COMPLETE = 16705;
+        NAMESPACE_METADATA = 17220;
+        MOSAIC_METADATA = 16964;
+        ACCOUNT_METADATA = 16708;
+        MOSAIC_ALIAS = 17230;
+        HASH_LOCK = 16712;
+        SECRET_LOCK = 16722;
+        SECRET_PROOF = 16978;
+        MULTISIG_MODIFICATION = 16725;
+        ACCOUNT_ADDRESS_RESTRICTION = 16720;
+        ACCOUNT_MOSAIC_RESTRICTION = 16976;
+        ACCOUNT_OPERATION_RESTRICTION = 17232;
+        ACCOUNT_LINK = 16716;
+        MOSAIC_GLOBAL_RESTRICTION = 16721;
+        MOSAIC_ADDRESS_RESTRICTION = 16977;
+    }
+
+    enum NEM2NetworkType {
+        MAIN_NET = 104;
+        TEST_NET = 152;
+        MIJIN = 96;
+        MIJIN_TEST = 144;
+    }
+
+    enum NEM2NamespaceRegistrationType {
+        ROOT = 0;
+        CHILD = 1;
+    }
+
+    enum NEM2AliasAction {
+        LINK = 1;
+        UNLINK = 0;
+    }
+
+    enum NEM2MosaicSupplyChangeAction {
+        INCREASE = 1;
+        DECREASE = 0;
+    }
+
+    enum NEM2LockHashAlgorithm {
+        SHA3_256 = 0; // Proof is hashed using SHA3-256.
+        KECCAK_256 = 1; // Proof is hashed using Keccak (ETH compatibility).
+        HASH_160 = 2; // Proof is hashed twice: first with SHA-256 and then with RIPEMD-160 (bitcoin’s OP_HASH160).
+        HASH_256 = 3; // Proof is hashed twice with SHA-256 (bitcoin’s OP_HASH256).
+    }
+
+    enum NEM2AccountRestrictionFlags {
+        ALLOW_INCOMING_ADDRESS = 1; // Allow only incoming transactions from a given address.
+        ALLOW_MOSAIC = 2; // Allow only incoming transactions containing a a given mosaic identifier.
+        ALLOW_INCOMING_TRANSACTION_TYPE = 4; // Allow only outgoing transactions with a given transaction type.
+        ALLOW_OUTGOING_ADDRESS = 16385; // Allow only outgoing transactions to a given address.
+        ALLOW_OUTGOING_TRANSACTION_TYPE = 16388; // Allow only outgoing transactions with a given transaction type.
+        BLOCK_INCOMING_ADDRESS = 32769; // Block incoming transactions from a given address.
+        BLOCK_MOSAIC = 32770; // Block incoming transactions containing a given mosaic identifier.
+        BLOCK_INCOMING_TRANSACTION_TYPE = 32772; // Block incoming transactions with a given transaction type.
+        BLOCK_OUTGOING_ADDRESS = 49153; // Block outgoing transactions from a given address.
+        BLOCK_OUTGOING_TRANSACTION_TYPE = 49156; // Block outgoing transactions with a given transaction type.
+    }
+
+    // END entities
+
+
+    /**
+    * Base Transaction attributes
+    * https://github.com/nemtech/catbuffer/blob/master/schemas/transaction.cats
+    */
+    message NEM2TransactionCommon {
+        optional NEM2EntityType type = 1; // inline EntityBody
+        optional NEM2NetworkType network_type = 2;
+        optional uint32 version = 3 [default=1]; // inline EntityBody, defined as uint16 in catbuffer
+        optional string max_fee = 4; // uint64
+        optional string deadline = 5; // uint64
+    }
+
+    /**
+    * Base Embedded Transaction attributes
+    * https://github.com/nemtech/catbuffer/blob/master/schemas/transaction.cats
+    */
+    message NEM2EmbeddedTransactionCommon {
+        optional NEM2EntityType type = 1; // inline EntityBody
+        optional NEM2NetworkType network_type = 2;
+        optional uint32 version = 3 [default=1]; // inline EntityBody, defined as uint16 in catbuffer
+        optional string public_key = 4;
+    }
+
+    /**
+    * Transfer Transaction type attributes
+    * https://github.com/nemtech/catbuffer/blob/master/schemas/transaction.cats
+    */
+    message NEM2TransferTransaction {
+        optional NEM2Address recipient_address = 1;
+        optional NEM2TransferMessage message = 2;
+        repeated NEM2Mosaic mosaics = 3;
+    }
+
+    message NEM2TransferMessage {
+        optional string payload = 1;
+        optional uint32 type = 2;
+    }
+
+    message NEM2Address {
+        optional string address = 1;
+        optional uint32 network_type = 2;
+    }
+
+    /**
+    * Mosaic Definition transaction type definition
+    */
+    message NEM2MosaicDefinitionTransaction {
+        optional uint32 nonce = 1; // mosaic nonce
+        optional string mosaic_id = 2; // mosaic identifier
+        optional uint32 flags = 3; // mosaic flags
+        optional uint32 divisibility = 4; // mosaic divisibility
+        optional uint64 duration = 5; // mosaic duration
+    }
+
+    /**
+    * Mosaic Supply Change transaction definition
+    */
+    message NEM2MosaicSupplyChangeTransaction {
+        optional string mosaic_id = 1; // mosaic identifier
+        optional NEM2MosaicSupplyChangeAction action = 2 [default=INCREASE]; // supply change direction (increase/descrease)
+        optional uint64 delta = 3; // change in supply
+    }
+
+    /**
+    * Namespace Registration transaction definition
+    */
+    message NEM2NamespaceRegistrationTransaction {
+        optional string duration = 1; // namespace duration (uint64)
+        optional string parent_id = 2; // parent namespace identifier (uint64)
+        optional string id = 3; // identifier (uint64)
+        optional NEM2NamespaceRegistrationType registration_type = 4 [default=ROOT];
+        optional uint32 name_size = 5; // length of name (bytes) (uint8 in catbuffer)
+        optional string namespace_name = 6; // namespace name
+    }
+
+    /**
+    * Namespace Address Alias
+    */
+    message NEM2AddressAliasTransaction {
+        optional string namespace_id = 1; // namespace identifier (uint64)
+        optional NEM2Address address = 2; // address to link/unlink namespace to
+        optional NEM2AliasAction alias_action = 3 [default=LINK];
+    }
+
+    /**
+    * Mosaic Alias transaction type definition
+    */
+    message NEM2MosaicAliasTransaction {
+        optional NEM2AliasAction alias_action = 1 [default=LINK];
+        optional string namespace_id = 2;
+        optional string mosaic_id = 3;
+    }
+
+    /**
+    * Hash Lock transaction type definition
+    */
+    message NEM2HashLockTransaction {
+        optional NEM2Mosaic mosaic = 1;
+        optional uint64 duration = 2;
+        optional string hash = 3;
+    }
+
+    /**
+    * Secret Lock transaction type definition
+    */
+    message NEM2SecretLockTransaction {
+        optional string secret = 1;
+        optional NEM2Mosaic mosaic = 2;
+        optional uint64 duration = 3;
+        optional NEM2LockHashAlgorithm hash_algorithm = 4 [default=SHA3_256];
+        optional NEM2Address recipient_address = 5;
+    }
+
+    /**
+    * Secret Proof transaction type definition
+    */
+    message NEM2SecretProofTransaction {
+        optional string secret = 1;
+        optional NEM2LockHashAlgorithm hash_algorithm = 2 [default=SHA3_256];
+        optional NEM2Address recipient_address = 3;
+        optional string proof = 4;
+    }
+
+    /**
+    * Aggregate transaction definition
+    * There is no difference between an aggregate completed
+    * and aggregate bonded transaction besides the "type"
+    * which is defined as part of TransactionCommon
+    */
+    message NEM2AggregateTransaction {
+        repeated NEM2InnerTransaction inner_transactions = 1;
+        repeated NEM2Cosignature cosignatures = 2;
+    }
+
+    /**
+    * Inner transaction type definition
+    * Used as part of an Aggregate transaction
+    */
+    message NEM2InnerTransaction {
+        optional NEM2EmbeddedTransactionCommon common = 1;
+        optional NEM2TransferTransaction transfer = 2;
+        optional NEM2MosaicDefinitionTransaction mosaic_definition = 3;
+        optional NEM2MosaicSupplyChangeTransaction mosaic_supply = 4;
+        optional NEM2NamespaceRegistrationTransaction namespace_registration = 5;
+        optional NEM2AddressAliasTransaction address_alias = 6;
+        optional NEM2MosaicAliasTransaction mosaic_alias = 7;
+        optional NEM2HashLockTransaction hash_lock = 8;
+        optional NEM2SecretLockTransaction secret_lock = 9;
+        optional NEM2SecretProofTransaction secret_proof = 10;
+        optional NEM2NamespaceMetadataTransaction namespace_metadata = 11;
+        optional NEM2MosaicMetadataTransaction mosaic_metadata = 12;
+        optional NEM2AccountMetadataTransaction account_metadata = 13;
+        optional NEM2MultisigModificationTransaction multisig_modification = 14;
+        optional NEM2AccountAddressRestrictionTransaction account_address_restriction = 15;
+        optional NEM2AccountMosaicRestrictionTransaction account_mosaic_restriction = 16;
+        optional NEM2AccountOperationRestrictionTransaction account_operation_restriction = 17;
+        optional NEM2AccountLinkTransaction account_link = 18;
+        optional NEM2MosaicGlobalRestrictionTransaction mosaic_global_restriction = 19;
+        optional NEM2MosaicAddressRestrictionTransaction mosaic_address_restriction = 20;
+    }
+
+    /**
+    * Cosignature type definition
+    * Used as part of an Aggregate transaction
+    */
+    message NEM2Cosignature {
+        optional string signature = 1;
+        optional string public_key = 2;
+    }
+
+    /**
+    * Namespace metadata type definition
+    * https://nemtech.github.io/concepts/metadata.html#namespace-metadata-transaction
+    */
+    message NEM2NamespaceMetadataTransaction {
+        optional string target_public_key = 1; // target namespace owner public key
+        optional string scoped_metadata_key = 2; // metadata key (uint64)
+        optional string target_namespace_id = 3; // id of target namespace (uint64)
+        optional uint32 value_size_delta = 4; // change in value size (in bytes)
+        optional uint32 value_size = 5; // new value size (in bytes)
+        optional string value = 6; // difference between previous value and new value
+    }
+
+    /**
+    * Mosaic metadata type definition
+    * https://nemtech.github.io/concepts/metadata.html#mosaic-metadata-transaction
+    */
+    message NEM2MosaicMetadataTransaction {
+        optional string target_public_key = 1; // target namespace owner public key
+        optional string scoped_metadata_key = 2; // metadata key (uint64)
+        optional string target_mosaic_id = 3; // id of target mosaic (uint64)
+        optional uint32 value_size_delta = 4; // change in value size (in bytes)
+        optional uint32 value_size = 5; // new value size (in bytes)
+        optional string value = 6; // difference between previous value and new value
+    }
+
+    /**
+    * Account metadata type definition
+    * https://nemtech.github.io/concepts/metadata.html#account-metadata-transaction
+    */
+    message NEM2AccountMetadataTransaction {
+        optional string target_public_key = 1; // target namespace owner public key
+        optional string scoped_metadata_key = 2; // metadata key (uint64)
+        optional uint32 value_size_delta = 3; // change in value size (in bytes)
+        optional uint32 value_size = 4; // new value size (in bytes)
+        optional string value = 5; // difference between previous value and new value
+    }
+
+    /**
+    * Multisig modification type definition
+    * https://nemtech.github.io/concepts/multisig-account.html#multisigaccountmodificationtransaction
+    */
+    message NEM2MultisigModificationTransaction {
+        optional uint32 min_approval_delta = 1; // relative change in number of cosignatures required to add public key
+        optional uint32 min_removal_delta = 2; // relative change in number of cosignatures required to remove public key
+        repeated string public_key_additions = 3; // public keys to add to multisig account
+        repeated string public_key_deletions = 4; // public keys to remove from multisig account
+    }
+
+    /**
+    * Account address restriction type definition
+    * https://nemtech.github.io/concepts/account-restriction.html#account-address-restriction-transaction
+    */
+    message NEM2AccountAddressRestrictionTransaction {
+        optional NEM2AccountRestrictionFlags restriction_type = 1;
+        repeated NEM2Address restriction_additions = 2;
+        repeated NEM2Address restriction_deletions = 3;
+    }
+
+    /**
+    * Account mosaic restriction type definition
+    * https://nemtech.github.io/concepts/account-restriction.html#account-mosaic-restriction-transaction
+    */
+    message NEM2AccountMosaicRestrictionTransaction {
+        optional NEM2AccountRestrictionFlags restriction_type = 1;
+        repeated string restriction_additions = 2; // Array of mosaic IDs
+        repeated string restriction_deletions = 3; // Array of mosaic IDs
+    }
+
+    /**
+    * Account operation restriction type definition
+    * https://nemtech.github.io/concepts/account-restriction.html#account-mosaic-restriction-transaction
+    */
+    message NEM2AccountOperationRestrictionTransaction {
+        optional NEM2AccountRestrictionFlags restriction_type = 1;
+        repeated NEM2EntityType restriction_additions = 2;
+        repeated NEM2EntityType restriction_deletions = 3;
+    }
+
+    /**
+    * To delegate the account importance to a remote account.
+    * https://nemtech.github.io/concepts/harvesting.html#account-link-transaction
+    **/
+    message NEM2AccountLinkTransaction {
+        optional string remote_public_key = 1;
+        optional uint32 link_action = 2;
+    }
+
+    /**
+    * The mosaic global restrictions are the network-wide rules that will determine whether an account will be able to transact a given mosaic.
+    * https://nemtech.github.io/concepts/mosaic-restriction.html#global-restriction
+    **/
+    message NEM2MosaicGlobalRestrictionTransaction {
+        optional string mosaic_id = 1;
+        optional string reference_mosaic_id = 2;
+        optional string restriction_key = 3; // uint64
+        optional string previous_restriction_value = 4; // uint64
+        optional string new_restriction_value = 5; // uint64
+        optional uint32 previous_restriction_type = 6;
+        optional uint32 new_restriction_type = 7;
+    }
+
+    /**
+    * Enabling accounts to transact with the token.
+    * https://nemtech.github.io/concepts/mosaic-restriction.html#address-restriction
+    **/
+    message NEM2MosaicAddressRestrictionTransaction {
+        optional string mosaic_id = 1;
+        optional string restriction_key = 2; // uint64
+        optional string previous_restriction_value = 3; // uint64
+        optional string new_restriction_value = 4; // uint64
+        optional NEM2Address target_address = 5;
+    }
+
+}
+
+/**
+ * Response: Contains NEM2 transaction data and signature
+ * @end
+ */
+message NEM2SignedTx {
+    optional bytes payload = 1;     // signed transaction payload
+    optional bytes hash = 2;        // transaction hash
+    optional bytes signature = 3;        // transaction signature
+}
+
+message NEM2CosignatureSignedTx {
+    optional bytes parent_hash = 1;
+    optional bytes signature = 2;        // transaction signature
+}
